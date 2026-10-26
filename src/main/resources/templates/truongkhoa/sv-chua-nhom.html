@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('SV chưa có nhóm', 'svchuanhom', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Sinh viên chưa có nhóm</h1>
+    <p class="sub">Danh sách để nhắc sinh viên tạo hoặc tham gia nhóm trước khi hết hạn đăng ký.</p></div>
+    <form class="page-actions" method="get" th:action="@{/truong-khoa/sv-chua-nhom}" th:if="${!#lists.isEmpty(dsDot)}">
+        <label class="visually-hidden" for="dotId">Chọn đợt</label>
+        <select class="form-select" id="dotId" name="dotId" data-autosubmit>
+            <option th:each="d : ${dsDot}" th:value="${d.id}" th:text="${d.tenDot}" th:selected="${dot != null and d.id == dot.id}">Đợt</option></select>
+        <noscript><button class="btn btn-primary">Xem</button></noscript></form></div>
+<div class="panel" th:if="${dot == null}"><div class="empty"><i class="bi bi-calendar2-week"></i><strong>Chưa có đợt đăng ký nào</strong></div></div>
+<th:block th:if="${dot != null}">
+<div class="kpi-grid kpi-grid-3">
+    <div class="kpi kpi-info"><i class="bi bi-mortarboard"></i><span class="kpi-label">Sinh viên đang hoạt động</span><span class="kpi-value" th:text="${tongSv}">0</span></div>
+    <div class="kpi kpi-ok"><i class="bi bi-people"></i><span class="kpi-label">Đã có nhóm</span><span class="kpi-value" th:text="${daCoNhom}">0</span></div>
+    <div class="kpi" th:classappend="${#lists.size(dsSv) gt 0} ? 'kpi-warn' : 'kpi-ok'"><i class="bi bi-person-exclamation"></i><span class="kpi-label">Chưa có nhóm</span><span class="kpi-value" th:text="${#lists.size(dsSv)}">0</span></div>
+</div>
+<div class="panel">
+    <div class="panel-head"><div class="search-box"><i class="bi bi-search"></i>
+        <input type="search" class="form-control form-control-sm" placeholder="Tìm theo tên, mã SV, lớp" data-filter="#bangSv" aria-label="Tìm sinh viên"></div>
+        <span class="chip chip-plain chip-info" th:text="${dot.tenDot}">Đợt</span></div>
+    <div class="table-wrap" th:if="${!#lists.isEmpty(dsSv)}"><table class="data-table" id="bangSv" data-grid>
+        <thead><tr><th>Sinh viên</th><th>Mã SV</th><th>Lớp</th><th>Email</th></tr></thead>
+        <tbody><tr th:each="s : ${dsSv}" data-row>
+            <td><div class="person"><span class="avatar" th:text="${s.initials}">A</span><div class="name" th:text="${s.hoTen}">Họ tên</div></div></td>
+            <td th:text="${s.maSv}">Mã</td><td th:text="${s.lop}">Lớp</td><td th:text="${s.user.email}">email</td></tr></tbody></table></div>
+    <div class="empty" th:if="${#lists.isEmpty(dsSv)}"><i class="bi bi-check2-circle"></i><strong>Mọi sinh viên đều đã có nhóm</strong></div>
+</div>
+</th:block>
+</section>
+</body>
+</html>

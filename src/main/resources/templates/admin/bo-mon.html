@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Bộ môn', 'bomon', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Bộ môn</h1><p class="sub">Danh mục bộ môn dùng khi tạo giảng viên và đề tài.</p></div></div>
+<form th:action="@{/admin/bo-mon}" method="post" class="panel" style="max-width:640px">
+    <div class="panel-body d-flex gap-2"><label class="visually-hidden" for="ten">Tên bộ môn mới</label>
+        <input class="form-control" id="ten" name="ten" maxlength="255" placeholder="Tên bộ môn mới" required>
+        <button class="btn btn-primary text-nowrap"><i class="bi bi-plus-lg"></i>Thêm</button></div></form>
+<div class="panel">
+    <div class="table-wrap" th:if="${!#lists.isEmpty(dsBoMon)}"><table class="data-table" data-grid>
+        <thead><tr><th>Bộ môn</th><th class="num">Giảng viên</th><th class="num">Đề tài</th><th></th></tr></thead>
+        <tbody><tr th:each="b : ${dsBoMon}">
+            <td style="min-width:320px"><form class="d-flex gap-2" th:action="@{/admin/bo-mon/{id}(id=${b.boMon().id})}" method="post">
+                <input class="form-control form-control-sm" name="ten" th:value="${b.boMon().tenBoMon}" maxlength="255" required aria-label="Tên bộ môn">
+                <button class="btn btn-sm btn-outline-primary text-nowrap">Đổi tên</button></form></td>
+            <td class="num" th:text="${b.soGv()}">0</td><td class="num" th:text="${b.soDeTai()}">0</td>
+            <td class="shrink"><form th:if="${b.xoaDuoc()}" th:action="@{/admin/bo-mon/{id}/xoa(id=${b.boMon().id})}" method="post" data-confirm="Xóa bộ môn này?" data-confirm-style="danger">
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i>Xóa</button></form>
+                <span class="sub-text" th:unless="${b.xoaDuoc()}">Đang được dùng</span></td></tr></tbody></table></div>
+    <div class="empty" th:if="${#lists.isEmpty(dsBoMon)}"><i class="bi bi-diagram-3"></i><strong>Chưa có bộ môn nào</strong></div>
+</div>
+</section>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Thông báo', 'tb', ~{::section})}">
+<body>
+<section>
+<div class="crumbs"><a th:href="@{/thong-bao}">Thông báo</a><span class="sep"></span>Chi tiết</div>
+<article class="panel"><div class="panel-body article">
+    <h1 th:text="${thongBao.tieuDe}">Tiêu đề</h1>
+    <p class="sub-text mb-4" th:text="'Đăng bởi ' + ${thongBao.nguoiDang.fullName} + ' lúc ' + ${#temporals.format(thongBao.ngayDang,'dd/MM/yyyy HH:mm')}">meta</p>
+    <div class="body pre-wrap" th:text="${thongBao.noiDung}">Nội dung</div>
+</div></article>
+</section>
+</body>
+</html>

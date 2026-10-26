@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Khối lượng giảng viên', 'khoiluong', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Khối lượng giảng viên</h1>
+    <p class="sub">Số nhóm hướng dẫn, phản biện và hội đồng trong các đợt chưa công bố, để phân công cân bằng.</p></div></div>
+<div class="panel">
+    <div class="panel-head"><div class="search-box"><i class="bi bi-search"></i>
+        <input type="search" class="form-control form-control-sm" placeholder="Tìm giảng viên" data-filter="#bangKl" aria-label="Tìm giảng viên"></div></div>
+    <div class="table-wrap" th:if="${!#lists.isEmpty(dsKhoiLuong)}"><table class="data-table" id="bangKl" data-grid>
+        <thead><tr><th>Giảng viên</th><th>Bộ môn</th><th class="num">Đề tài</th><th class="num">Nhóm hướng dẫn</th><th class="num">Nhóm phản biện</th><th class="num">Hội đồng</th><th class="num">Chưa nhập điểm</th><th>Mức tải</th></tr></thead>
+        <tbody>
+        <tr th:each="k : ${dsKhoiLuong}" data-row>
+            <td><div class="person"><span class="avatar" th:text="${k.gv().initials}">A</span>
+                <div><div class="name" th:text="${k.gv().hoTen}">Họ tên</div><small th:text="${k.gv().maGv}">Mã</small></div></div></td>
+            <td th:text="${k.gv().boMon.tenBoMon}">Bộ môn</td>
+            <td class="num" th:text="${k.deTai()}">0</td>
+            <td class="num" th:text="${k.nhomHuongDan()}">0</td>
+            <td class="num" th:text="${k.nhomPhanBien()}">0</td>
+            <td class="num" th:text="${k.hoiDong()}">0</td>
+            <td class="num"><span class="chip chip-warn" th:if="${k.chuaNhapDiem() gt 0}" th:text="${k.chuaNhapDiem()}">1</span>
+                <span class="muted-dash" th:unless="${k.chuaNhapDiem() gt 0}">0</span></td>
+            <td style="min-width:140px" th:attr="data-sort=${k.tongNhom()}"><div class="bar"><span class="bar-fill info" th:style="'width:' + ${nhomNhieuNhat gt 0 ? (k.tongNhom() * 100 / nhomNhieuNhat) : 0} + '%'"></span></div>
+                <div class="sub-text" th:text="${k.tongNhom()} + ' nhóm'">0 nhóm</div></td></tr>
+        </tbody></table></div>
+    <div class="empty" th:if="${#lists.isEmpty(dsKhoiLuong)}"><i class="bi bi-person-workspace"></i><strong>Chưa có giảng viên nào</strong></div>
+</div>
+</section>
+</body>
+</html>

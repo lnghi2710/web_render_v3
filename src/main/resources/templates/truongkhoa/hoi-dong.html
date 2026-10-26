@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Hội đồng', 'dot', ~{::section})}">
+<body>
+<section>
+<div class="crumbs"><a th:href="@{/truong-khoa/dot}">Đợt đăng ký</a><span class="sep"></span><span th:text="${dot.tenDot}">Đợt</span></div>
+<div class="page-head"><div><h1>Hội đồng chấm khóa luận</h1>
+    <p class="sub">Mỗi hội đồng có 3 đến 5 giảng viên, một chủ tịch và một thư ký. Chủ tịch nhập điểm hội đồng.</p></div>
+    <div class="page-actions" th:if="${dot.loai.coHoiDong() and !dot.daCongBo}">
+        <a class="btn btn-primary" th:href="@{/truong-khoa/dot/{id}/hoi-dong/moi(id=${dot.id})}"><i class="bi bi-plus-lg"></i>Lập hội đồng</a></div></div>
+<div class="notice notice-info" th:unless="${dot.loai.coHoiDong()}"><i class="bi bi-info-circle-fill"></i><span>Chỉ đợt khóa luận tốt nghiệp mới có hội đồng.</span></div>
+
+<div class="panel" th:each="h : ${dsHoiDong}">
+    <div class="panel-head"><div><h2 th:text="${h.tenHoiDong}">Hội đồng</h2>
+        <div class="sub-text"><span th:text="${h.thoiGian != null} ? ${#temporals.format(h.thoiGian,'dd/MM/yyyy HH:mm')} : 'Chưa đặt thời gian'">Thời gian</span><span th:if="${h.diaDiem != null and !#strings.isEmpty(h.diaDiem)}" th:text="', ' + ${h.diaDiem}">, Địa điểm</span></div></div>
+        <form th:action="@{/truong-khoa/hoi-dong/{id}/xoa(id=${h.id})}" method="post" th:if="${#lists.isEmpty(h.nhoms)}" data-confirm="Xóa hội đồng này?" data-confirm-style="danger">
+            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i>Xóa</button></form></div>
+    <div class="panel-body">
+        <div class="row g-4">
+            <div class="col-lg-5"><h3 class="h6 mb-2">Thành viên</h3>
+                <div class="person mb-2" th:each="tv : ${h.thanhViens}"><span class="avatar" th:text="${tv.giangVien.initials}">A</span>
+                    <div><div class="name" th:text="${tv.giangVien.hoTen}">Họ tên</div><small th:text="${tv.vaiTro.nhan}">Vai trò</small></div></div></div>
+            <div class="col-lg-7"><h3 class="h6 mb-2">Nhóm được gán</h3>
+                <ul class="list-unstyled mb-3">
+                    <li class="d-flex gap-2 align-items-center mb-1" th:each="n : ${h.nhoms}">
+                        <span><strong th:text="${n.tenNhom}">Nhóm</strong>, <span class="sub-text" th:text="${n.deTai.tenDeTai}">Đề tài</span></span>
+                        <form class="ms-auto" th:action="@{/truong-khoa/nhom/{id}/go-hoi-dong(id=${n.id})}" method="post" th:unless="${dot.daCongBo}">
+                            <button class="btn btn-sm btn-outline-secondary py-0">Gỡ</button></form></li>
+                    <li class="muted-dash" th:if="${#lists.isEmpty(h.nhoms)}">Chưa gán nhóm nào.</li></ul>
+                <form th:action="@{/truong-khoa/hoi-dong/{id}/nhom(id=${h.id})}" method="post" th:unless="${dot.daCongBo}">
+                    <div class="form-hint mb-2">Gán thêm nhóm chưa có hội đồng. Nhóm có giảng viên hướng dẫn trùng với thành viên hội đồng sẽ bị từ chối.</div>
+                    <div class="pick-grid mb-2">
+                        <label class="pick" th:each="n : ${dsNhom}" th:if="${n.hoiDong == null}">
+                            <input class="form-check-input mt-0" type="checkbox" name="nhomIds" th:value="${n.id}"> <span th:text="${n.tenNhom}">Nhóm</span></label></div>
+                    <button class="btn btn-sm btn-primary">Gán nhóm đã chọn</button></form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel" th:if="${dot.loai.coHoiDong() and #lists.isEmpty(dsHoiDong)}"><div class="empty"><i class="bi bi-people"></i>
+    <strong>Chưa có hội đồng nào</strong>Lập hội đồng rồi gán các nhóm đã có đề tài vào hội đồng.</div></div>
+</section>
+</body>
+</html>

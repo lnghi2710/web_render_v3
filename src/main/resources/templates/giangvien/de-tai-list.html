@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Đề tài của tôi', 'detai', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Đề tài của tôi</h1><p class="sub">Đăng ký đề tài trong thời gian đợt mở. Đề tài cần được Trưởng khoa duyệt trước khi sinh viên thấy.</p></div>
+    <div class="page-actions">
+        <div class="dropdown" th:if="${!#lists.isEmpty(dsDotMo)}">
+            <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-plus-lg"></i>Đăng ký đề tài mới</button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li th:each="d : ${dsDotMo}"><a class="dropdown-item" th:href="@{/giang-vien/de-tai/moi(dotId=${d.id})}" th:text="${d.tenDot}">Đợt</a></li></ul></div>
+        <span class="chip chip-plain" th:if="${#lists.isEmpty(dsDotMo)}">Hiện không có đợt nào đang mở</span></div></div>
+<div class="panel">
+    <div class="table-wrap" th:if="${!#lists.isEmpty(dsDeTai)}"><table class="data-table" data-grid>
+        <thead><tr><th>Đề tài</th><th>Đợt</th><th>Giảng viên hướng dẫn</th><th>Trạng thái</th><th>Nhóm</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="d : ${dsDeTai}">
+            <td style="min-width:300px"><div class="cell-title" th:text="${d.tenDeTai}">Tên đề tài</div>
+                <div class="clamp pre-wrap" th:text="${d.moTa}">Mô tả</div><div class="sub-text" th:text="${d.boMon.tenBoMon}">Bộ môn</div></td>
+            <td th:text="${d.dot.tenDot}">Đợt</td>
+            <td th:text="${d.tenGvhds}">Giảng viên</td>
+            <td><span class="chip" th:classappend="'chip-' + ${d.trangThai.mau}" th:text="${d.trangThai.nhan}">Trạng thái</span>
+                <div class="sub-text mt-1" th:if="${d.lyDoTuChoi != null}" th:text="'Lý do: ' + ${d.lyDoTuChoi}">Lý do</div></td>
+            <td th:text="${d.nhom != null} ? ${d.nhom.tenNhom} : 'Chưa có'">Nhóm</td>
+            <td class="shrink">
+                <th:block th:if="${d.dot.trongThoiGianGv() and d.nhom == null}">
+                    <a class="btn btn-sm btn-outline-primary" th:href="@{/giang-vien/de-tai/{id}/sua(id=${d.id})}"><i class="bi bi-pencil"></i>Sửa</a>
+                    <form class="d-inline" th:action="@{/giang-vien/de-tai/{id}/xoa(id=${d.id})}" method="post" data-confirm="Xóa đề tài này?" data-confirm-style="danger">
+                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i>Xóa</button></form></th:block></td></tr>
+        </tbody></table></div>
+    <div class="empty" th:if="${#lists.isEmpty(dsDeTai)}"><i class="bi bi-journal-text"></i><strong>Bạn chưa đăng ký đề tài nào</strong>Chọn "Đăng ký đề tài mới" khi có đợt đang mở.</div>
+</div>
+</section>
+</body>
+</html>

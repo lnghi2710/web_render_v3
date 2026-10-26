@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Lịch của tôi', 'lichgv', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Lịch của tôi</h1>
+    <p class="sub">Hạn đăng ký đề tài, hạn nộp điểm và buổi hội đồng liên quan đến bạn, từ 7 ngày trước trở đi.</p></div></div>
+<div class="panel">
+    <ul class="timeline" th:if="${!#lists.isEmpty(dsSuKien)}">
+        <li th:each="s : ${dsSuKien}" th:classappend="${s.daQua()} ? 'is-past'">
+            <div class="when"><b th:text="${#temporals.format(s.thoiGian(),'dd/MM')}">01/01</b><span th:text="${#temporals.format(s.thoiGian(),'HH:mm')}">08:00</span></div>
+            <a th:href="@{${s.url()}}"><span class="chip chip-plain" th:classappend="'chip-' + ${s.muc()}" th:text="${s.loai()}">Loại</span>
+                <span th:text="${s.noiDung()}">Nội dung</span><span class="sub-text" th:if="${s.daQua()}"> (đã qua)</span></a></li>
+    </ul>
+    <div class="empty" th:if="${#lists.isEmpty(dsSuKien)}"><i class="bi bi-calendar3"></i><strong>Chưa có mốc nào sắp tới</strong></div>
+</div>
+</section>
+</body>
+</html>

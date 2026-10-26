@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Nhóm và chấm điểm', 'nhom', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Nhóm và chấm điểm</h1><p class="sub">Các nhóm bạn hướng dẫn, phản biện hoặc tham gia hội đồng. Điểm khóa lại khi Trưởng khoa công bố kết quả.</p></div></div>
+<div class="panel">
+    <div class="table-wrap" th:if="${!#lists.isEmpty(dsNhiemVu)}"><table class="data-table" data-grid>
+        <thead><tr><th>Vai trò của bạn</th><th>Nhóm</th><th>Đề tài</th><th>Báo cáo</th><th>Điểm đã nhập</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="nv : ${dsNhiemVu}">
+            <td><span class="chip chip-plain chip-primary" th:text="${nv.vaiTro()}">Vai trò</span></td>
+            <td style="min-width:220px"><div class="cell-title" th:text="${nv.nhom().tenNhom}">Nhóm</div>
+                <div class="sub-text" th:text="${nv.nhom().dot.tenDot}">Đợt</div>
+                <div class="sub-text" th:each="tv : ${nv.nhom().thanhViens}" th:text="${tv.sinhVien.nhan} + (${tv.laNhomTruong} ? ' (nhóm trưởng)' : '')">sv</div></td>
+            <td style="min-width:240px" th:text="${nv.nhom().deTai != null} ? ${nv.nhom().deTai.tenDeTai} : 'Chưa đăng ký đề tài'">Đề tài</td>
+            <td><a th:if="${nv.nhom().fileBaoCao != null}" th:href="@{/giang-vien/nhom/{id}/bao-cao(id=${nv.nhom().id})}"><i class="bi bi-file-earmark-pdf"></i>Tải PDF</a>
+                <span class="muted-dash" th:unless="${nv.nhom().fileBaoCao != null}">Chưa nộp</span>
+                <div class="sub-text" th:if="${nv.nhom().ngayNopBaoCao != null}" th:text="${#temporals.format(nv.nhom().ngayNopBaoCao,'dd/MM/yyyy HH:mm')}">time</div></td>
+            <td style="min-width:200px">
+                <div th:if="${nv.diem() != null}"><span class="score" th:text="${nv.diem().diem}">8.5</span>
+                    <div class="clamp pre-wrap" th:if="${nv.diem().nhanXet != null}" th:text="${nv.diem().nhanXet}">Nhận xét</div></div>
+                <span class="muted-dash" th:if="${nv.diem() == null and nv.coQuyenCham()}">Chưa nhập</span>
+                <span class="muted-dash" th:if="${!nv.coQuyenCham()}">Chỉ xem</span></td>
+            <td class="shrink"><a class="btn btn-sm btn-primary" th:if="${nv.coQuyenCham() and !nv.nhom().dot.daCongBo and nv.nhom().deTai != null}"
+                   th:href="@{/giang-vien/nhom/{id}/diem(id=${nv.nhom().id},loai=${nv.loai()})}"><i class="bi bi-pencil-square"></i><span th:text="${nv.diem() == null} ? 'Nhập điểm' : 'Sửa điểm'">Nhập điểm</span></a></td></tr>
+        </tbody></table></div>
+    <div class="empty" th:if="${#lists.isEmpty(dsNhiemVu)}"><i class="bi bi-clipboard-check"></i><strong>Bạn chưa được giao nhóm nào</strong>Nhóm sẽ hiện ở đây khi sinh viên chọn đề tài của bạn hoặc khi bạn được phân công.</div>
+</div>
+</section>
+</body>
+</html>

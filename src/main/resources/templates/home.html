@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Tổng quan', 'home', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div>
+    <h1 th:text="'Xin chào, ' + ${#authentication.principal.fullName}">Xin chào</h1>
+    <p class="sub" th:text="'Bạn đang đăng nhập với vai trò ' + ${#authentication.principal.roleLabel} + '.'">Vai trò</p></div></div>
+
+<div class="kpi-grid" th:if="${!#lists.isEmpty(chuong.kpi())}">
+    <a class="kpi" th:each="k : ${chuong.kpi()}" th:href="@{${k.url()}}" th:classappend="'kpi-' + ${k.muc()}">
+        <i class="bi" th:classappend="${k.icon()}"></i>
+        <span class="kpi-label" th:text="${k.nhan()}">Nhãn</span>
+        <span class="kpi-value" th:text="${k.giaTri()}">0</span>
+        <span class="kpi-note" th:text="${k.ghiChu()}">Ghi chú</span>
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-xl-7">
+        <div class="panel">
+            <div class="panel-head"><h2>Việc cần xử lý</h2></div>
+            <ul class="todo" th:if="${!#lists.isEmpty(chuong.viec())}">
+                <li th:each="v : ${chuong.viec()}"><a th:href="@{${v.url()}}">
+                    <span class="mark" th:classappend="${v.muc()}"></span>
+                    <span th:text="${v.noiDung()}">Nội dung</span>
+                    <i class="bi bi-chevron-right go"></i></a></li></ul>
+            <div class="empty" th:if="${#lists.isEmpty(chuong.viec())}"><i class="bi bi-check2-circle"></i>
+                <strong>Không có việc nào cần xử lý</strong>Khi có việc mới, bạn sẽ thấy ở đây.</div>
+        </div>
+        <div class="panel" th:if="${!#lists.isEmpty(chuong.bieu())}">
+            <div class="panel-head"><h2>Tiến độ</h2></div>
+            <div class="panel-body charts">
+                <th:block th:each="b : ${chuong.bieu()}"><div th:replace="~{fragments/ui :: bieu(${b})}"></div></th:block>
+            </div>
+        </div>
+        <div class="panel" th:each="d : ${chuong.dots()}">
+            <div class="panel-body">
+                <div class="dot-title mb-3"><h2 th:text="${d.tenDot}">Đợt</h2>
+                    <span class="chip chip-plain chip-info" th:text="${d.loai.nhan}">Loại</span>
+                    <span class="chip" th:classappend="'chip-' + ${d.trangThaiHienTai.mau}" th:text="${d.trangThaiHienTai.nhan}">Trạng thái</span></div>
+                <ol class="phase" th:replace="~{fragments/ui :: phase(${d})}"></ol>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-5">
+        <div class="panel">
+            <div class="panel-head"><h2>Thông báo mới</h2><a class="small" th:href="@{/thong-bao}">Xem tất cả</a></div>
+            <div class="feed" th:if="${!#lists.isEmpty(chuong.thongBaoMoi())}">
+                <a th:each="t : ${chuong.thongBaoMoi()}" th:href="@{/thong-bao/{id}(id=${t.id})}">
+                    <div class="t" th:text="${t.tieuDe}">Tiêu đề</div>
+                    <div class="meta" th:text="${#temporals.format(t.ngayDang,'dd/MM/yyyy HH:mm')}">time</div></a></div>
+            <div class="empty" th:if="${#lists.isEmpty(chuong.thongBaoMoi())}"><i class="bi bi-megaphone"></i><strong>Chưa có thông báo</strong></div>
+        </div>
+    </div>
+</div>
+</section>
+</body>
+</html>

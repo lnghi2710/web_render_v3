@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Nhập tài khoản hàng loạt', 'nhap', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Nhập tài khoản hàng loạt</h1>
+    <p class="sub">Tạo nhiều tài khoản từ một tệp CSV. Từ Excel, chọn Lưu thành CSV UTF-8.</p></div>
+    <div class="page-actions"><a class="btn btn-outline-primary" th:href="@{/admin/nhap-tai-khoan/mau}"><i class="bi bi-download"></i>Tải tệp mẫu</a></div></div>
+<div class="notice notice-info"><i class="bi bi-info-circle-fill"></i><span>Cột bắt buộc: <code>username, mat_khau, ho_ten, email, vai_tro</code>. Sinh viên thêm <code>ma_so</code> (mã SV) và <code>lop_hoac_bo_mon</code> (lớp). Giảng viên thêm mã GV và tên bộ môn đã có. Vai trò: ADMIN, TRUONG_KHOA, GIANG_VIEN, SINH_VIEN. Tối đa <span th:text="${toiDa}">1000</span> dòng; dòng lỗi được bỏ qua và báo lại, các dòng đúng vẫn được tạo.</span></div>
+<form th:action="@{/admin/nhap-tai-khoan}" method="post" enctype="multipart/form-data" class="panel" style="max-width:640px">
+    <div class="panel-body"><label class="form-label" for="file">Tệp CSV</label>
+        <input type="file" id="file" name="file" accept=".csv,text/csv" class="form-control" required></div>
+    <div class="panel-foot"><button class="btn btn-primary"><i class="bi bi-upload"></i>Nhập tài khoản</button></div>
+</form>
+<div class="panel" th:if="${ketQua != null}">
+    <div class="panel-head"><h2>Kết quả</h2>
+        <span class="chip chip-ok" th:text="${ketQua.thanhCong()} + ' thành công'">0</span></div>
+    <div class="panel-body">
+        <p th:text="'Đã xử lý ' + ${ketQua.tong()} + ' dòng, tạo được ' + ${ketQua.thanhCong()} + ' tài khoản.'">Tóm tắt</p>
+        <ul class="mb-0" th:if="${!#lists.isEmpty(ketQua.loi())}"><li class="text-danger" th:each="e : ${ketQua.loi()}" th:text="${e}">Lỗi</li></ul>
+    </div>
+</div>
+</section>
+</body>
+</html>

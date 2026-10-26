@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Tổng quan hệ thống', 'tongquan', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Tổng quan hệ thống</h1><p class="sub">Số liệu tài khoản, đợt đăng ký và hoạt động gần đây.</p></div></div>
+<div class="kpi-grid">
+    <a class="kpi kpi-info" th:href="@{/admin/tai-khoan}"><i class="bi bi-people"></i><span class="kpi-label">Tài khoản</span><span class="kpi-value" th:text="${tq.tongTaiKhoan()}">0</span><span class="kpi-note" th:text="${tq.daKhoa()} + ' đang bị khóa'">0</span></a>
+    <div class="kpi kpi-info"><i class="bi bi-calendar2-week"></i><span class="kpi-label">Đợt đăng ký</span><span class="kpi-value" th:text="${tq.soDot()}">0</span><span class="kpi-note" th:text="${tq.dotChuaCongBo()} + ' chưa công bố'">0</span></div>
+    <div class="kpi kpi-info"><i class="bi bi-journal-text"></i><span class="kpi-label">Đề tài</span><span class="kpi-value" th:text="${tq.soDeTai()}">0</span><span class="kpi-note">tất cả đợt</span></div>
+    <div class="kpi kpi-info"><i class="bi bi-diagram-2"></i><span class="kpi-label">Nhóm</span><span class="kpi-value" th:text="${tq.soNhom()}">0</span><span class="kpi-note" th:text="${tq.thaoTac24h()} + ' thao tác trong 24 giờ'">0</span></div>
+</div>
+<div class="row g-4">
+    <div class="col-lg-5"><div class="panel"><div class="panel-head"><h2>Tài khoản theo vai trò</h2></div><div class="panel-body">
+        <dl class="kv">
+            <dt>Quản trị viên</dt><dd th:text="${tq.admin()}">0</dd><dt>Trưởng khoa</dt><dd th:text="${tq.truongKhoa()}">0</dd>
+            <dt>Giảng viên</dt><dd th:text="${tq.giangVien()}">0</dd><dt>Sinh viên</dt><dd th:text="${tq.sinhVien()}">0</dd></dl></div></div></div>
+    <div class="col-lg-7"><div class="panel"><div class="panel-head"><h2>Thao tác gần đây</h2><a class="small" th:href="@{/admin/nhat-ky}">Xem nhật ký</a></div>
+        <ul class="todo" th:if="${!#lists.isEmpty(tq.ganDay())}"><li th:each="l : ${tq.ganDay()}"><a th:href="@{/admin/nhat-ky}"><span class="mark info"></span>
+            <span><span th:text="${l.hanhDong}">Hành động</span><small class="d-block text-muted" th:text="${#temporals.format(l.thoiGian,'dd/MM/yyyy HH:mm')} + ' · ' + (${l.user != null} ? ${l.user.username} : 'Hệ thống')">time</small></span></a></li></ul>
+        <div class="empty" th:if="${#lists.isEmpty(tq.ganDay())}"><i class="bi bi-clock-history"></i><strong>Chưa có thao tác nào</strong></div></div></div>
+</div>
+</section>
+</body>
+</html>

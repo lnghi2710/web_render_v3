@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Việc cần chấm', 'vieccancham', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Việc cần chấm</h1>
+    <p class="sub">Các nhóm bạn có quyền chấm nhưng chưa nhập điểm, ở các đợt chưa công bố.</p></div></div>
+<div class="panel">
+    <div class="table-wrap" th:if="${!#lists.isEmpty(dsNhiemVu)}"><table class="data-table" data-grid>
+        <thead><tr><th>Vai trò của bạn</th><th>Nhóm</th><th>Đề tài</th><th>Báo cáo</th><th></th></tr></thead>
+        <tbody><tr th:each="nv : ${dsNhiemVu}">
+            <td><span class="chip chip-plain chip-primary" th:text="${nv.vaiTro()}">Vai trò</span></td>
+            <td style="min-width:200px"><div class="cell-title" th:text="${nv.nhom().tenNhom}">Nhóm</div><div class="sub-text" th:text="${nv.nhom().dot.tenDot}">Đợt</div></td>
+            <td style="min-width:240px" th:text="${nv.nhom().deTai.tenDeTai}">Đề tài</td>
+            <td><a th:if="${nv.nhom().fileBaoCao != null}" th:href="@{/giang-vien/nhom/{id}/bao-cao(id=${nv.nhom().id})}"><i class="bi bi-file-earmark-pdf"></i>Tải PDF</a>
+                <span class="muted-dash" th:unless="${nv.nhom().fileBaoCao != null}">Chưa nộp</span></td>
+            <td class="shrink"><a class="btn btn-sm btn-primary" th:href="@{/giang-vien/nhom/{id}/diem(id=${nv.nhom().id},loai=${nv.loai()})}"><i class="bi bi-pencil-square"></i>Nhập điểm</a></td></tr></tbody></table></div>
+    <div class="empty" th:if="${#lists.isEmpty(dsNhiemVu)}"><i class="bi bi-check2-circle"></i><strong>Bạn đã chấm xong</strong>Không còn nhóm nào đang chờ điểm của bạn.</div>
+</div>
+</section>
+</body>
+</html>

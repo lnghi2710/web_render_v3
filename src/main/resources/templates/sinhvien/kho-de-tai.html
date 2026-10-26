@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Kho đề tài', 'kho', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Kho đề tài</h1>
+    <p class="sub">Lọc đề tài đã công bố theo bộ môn, giảng viên và tình trạng. Nhóm trưởng đăng ký ở trang Đề tài của đợt.</p></div>
+    <form class="page-actions" method="get" th:action="@{/sinh-vien/kho-de-tai}" th:if="${!#lists.isEmpty(dsDot)}">
+        <label class="visually-hidden" for="dotId">Chọn đợt</label>
+        <select class="form-select" id="dotId" name="dotId" data-autosubmit>
+            <option th:each="d : ${dsDot}" th:value="${d.id}" th:text="${d.tenDot}" th:selected="${dot != null and d.id == dot.id}">Đợt</option></select>
+        <noscript><button class="btn btn-primary">Xem</button></noscript></form></div>
+<div class="panel" th:if="${dot == null}"><div class="empty"><i class="bi bi-collection"></i><strong>Chưa có đợt đăng ký nào</strong></div></div>
+<div class="panel" th:if="${dot != null}" data-filter-group="#bangKho">
+    <div class="panel-head filters">
+        <div class="search-box"><i class="bi bi-search"></i>
+            <input type="search" class="form-control form-control-sm" placeholder="Tìm tên đề tài, mô tả" data-f="q" aria-label="Tìm đề tài"></div>
+        <select class="form-select form-select-sm" data-f="bomon" aria-label="Lọc theo bộ môn"><option value="">Mọi bộ môn</option>
+            <option th:each="b : ${boMons}" th:value="${b}" th:text="${b}">Bộ môn</option></select>
+        <select class="form-select form-select-sm" data-f="gv" aria-label="Lọc theo giảng viên"><option value="">Mọi giảng viên</option>
+            <option th:each="g : ${giangViens}" th:value="${g}" th:text="${g}">GV</option></select>
+        <label class="form-check mb-0"><input class="form-check-input" type="checkbox" data-f="trong"> <span class="form-check-label">Chỉ đề tài còn trống</span></label>
+    </div>
+    <div class="table-wrap" th:if="${!#lists.isEmpty(dsDeTai)}"><table class="data-table" id="bangKho" data-grid>
+        <thead><tr><th>Đề tài</th><th>Bộ môn</th><th>Giảng viên hướng dẫn</th><th>Tình trạng</th><th></th></tr></thead>
+        <tbody><tr th:each="d : ${dsDeTai}" data-row th:attr="data-bomon=${d.boMon.tenBoMon},data-gv=${d.tenGvhds},data-trong=${d.nhom == null}">
+            <td style="min-width:320px"><div class="cell-title" th:text="${d.tenDeTai}">Tên đề tài</div><div class="clamp pre-wrap" th:text="${d.moTa}">Mô tả</div></td>
+            <td th:text="${d.boMon.tenBoMon}">Bộ môn</td><td th:text="${d.tenGvhds}">Giảng viên</td>
+            <td><span class="chip chip-ok" th:if="${d.nhom == null}">Còn trống</span><span class="chip" th:if="${d.nhom != null}">Đã có nhóm</span></td>
+            <td class="shrink"><a class="btn btn-sm btn-outline-primary" th:if="${d.nhom == null}" th:href="@{/sinh-vien/dot/{id}/de-tai(id=${dot.id})}">Đăng ký</a></td></tr></tbody></table></div>
+    <div class="empty" th:if="${#lists.isEmpty(dsDeTai)}"><i class="bi bi-journal-text"></i><strong>Chưa có đề tài nào được công bố</strong>Đề tài xuất hiện sau khi Trưởng khoa duyệt.</div>
+    <div class="empty d-none" data-no-match><i class="bi bi-funnel"></i><strong>Không có đề tài khớp bộ lọc</strong></div>
+</div>
+</section>
+</body>
+</html>

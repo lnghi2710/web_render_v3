@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Tài khoản', 'tk', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Tài khoản</h1><p class="sub">Cấp, chỉnh sửa và khóa tài khoản của quản trị viên, trưởng khoa, giảng viên và sinh viên.</p></div>
+    <div class="page-actions"><a class="btn btn-primary" th:href="@{/admin/tai-khoan/moi}"><i class="bi bi-person-plus"></i>Thêm tài khoản</a></div></div>
+<div class="panel">
+    <div class="panel-head"><div class="search-box"><i class="bi bi-search"></i>
+        <input type="search" class="form-control form-control-sm" placeholder="Tìm theo tên, tài khoản, email" data-filter="#bangTk" aria-label="Tìm tài khoản"></div>
+        <span class="sub-text" th:text="${#lists.size(dsTaiKhoan)} + ' tài khoản'">0 tài khoản</span></div>
+    <div class="table-wrap"><table class="data-table" data-grid id="bangTk">
+        <thead><tr><th>Người dùng</th><th>Email</th><th>Vai trò</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="u : ${dsTaiKhoan}" data-row>
+            <td><div class="person"><span class="avatar" th:text="${u.initials}">A</span>
+                <div><div class="name" th:text="${u.fullName}">Họ tên</div><small th:text="${u.username}">tài khoản</small></div></div></td>
+            <td th:text="${u.email}">email</td>
+            <td><span class="chip chip-plain chip-info" th:text="${u.role.nhan}">vai trò</span></td>
+            <td><span class="chip chip-ok" th:if="${u.enabled}">Hoạt động</span><span class="chip chip-danger" th:unless="${u.enabled}">Đã khóa</span></td>
+            <td class="shrink">
+                <a class="btn btn-sm btn-outline-primary" th:href="@{/admin/tai-khoan/{id}/sua(id=${u.id})}"><i class="bi bi-pencil"></i>Sửa</a>
+                <form class="d-inline" th:if="${u.enabled}" th:action="@{/admin/tai-khoan/{id}/khoa(id=${u.id})}" method="post" data-confirm="Khóa tài khoản này? Người dùng sẽ không đăng nhập được." data-confirm-style="danger">
+                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-lock"></i>Khóa</button></form>
+                <form class="d-inline" th:unless="${u.enabled}" th:action="@{/admin/tai-khoan/{id}/mo-khoa(id=${u.id})}" method="post">
+                    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-unlock"></i>Mở khóa</button></form></td></tr>
+        </tbody></table></div>
+</div>
+</section>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Thông báo', 'tb', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Thông báo của khoa</h1><p class="sub">Các thông báo chính thức, mới nhất ở trên cùng.</p></div>
+    <div class="page-actions" sec:authorize="hasAnyRole('ADMIN','TRUONG_KHOA')">
+        <a class="btn btn-primary" th:href="@{/dang-thong-bao}"><i class="bi bi-pencil-square"></i>Đăng thông báo</a></div></div>
+<div class="panel">
+    <div class="feed" th:if="${!#lists.isEmpty(dsThongBao)}">
+        <a th:each="t : ${dsThongBao}" th:href="@{/thong-bao/{id}(id=${t.id})}">
+            <div class="t" th:text="${t.tieuDe}">Tiêu đề</div>
+            <div class="meta" th:text="${t.nguoiDang.fullName} + ', ' + ${#temporals.format(t.ngayDang,'dd/MM/yyyy HH:mm')}">meta</div>
+            <div class="excerpt" th:text="${#strings.abbreviate(t.noiDung,180)}">Trích đoạn</div></a></div>
+    <div class="empty" th:if="${#lists.isEmpty(dsThongBao)}"><i class="bi bi-megaphone"></i><strong>Chưa có thông báo nào</strong>Thông báo của khoa sẽ hiện ở đây.</div>
+</div>
+</section>
+</body>
+</html>

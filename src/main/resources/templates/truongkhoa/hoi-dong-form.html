@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Lập hội đồng', 'dot', ~{::section})}">
+<body>
+<section>
+<div class="crumbs"><a th:href="@{/truong-khoa/dot}">Đợt đăng ký</a><span class="sep"></span><a th:href="@{/truong-khoa/dot/{id}/hoi-dong(id=${dot.id})}">Hội đồng</a><span class="sep"></span>Lập mới</div>
+<div class="page-head"><div><h1>Lập hội đồng</h1><p class="sub" th:text="'Đợt: ' + ${dot.tenDot}">Đợt</p></div></div>
+<form th:action="@{/truong-khoa/dot/{id}/hoi-dong(id=${dot.id})}" th:object="${form}" method="post" class="panel" style="max-width:860px">
+    <div class="panel-body">
+        <div class="form-section"><h3>Thông tin buổi bảo vệ</h3><p>Thời gian và địa điểm có thể bổ sung sau.</p>
+            <div class="row g-3">
+                <div class="col-12"><label class="form-label" for="tenHoiDong">Tên hội đồng</label><input class="form-control" th:field="*{tenHoiDong}">
+                    <div class="field-error" th:if="${#fields.hasErrors('tenHoiDong')}" th:errors="*{tenHoiDong}"></div></div>
+                <div class="col-md-6"><label class="form-label" for="thoiGian">Thời gian</label><input type="datetime-local" class="form-control" th:field="*{thoiGian}"></div>
+                <div class="col-md-6"><label class="form-label" for="diaDiem">Địa điểm</label><input class="form-control" th:field="*{diaDiem}"></div>
+            </div></div>
+        <div class="form-section"><h3>Thành viên</h3><p>Chọn 3 đến 5 giảng viên, sau đó chỉ định chủ tịch và thư ký trong số đó.</p>
+            <div class="pick-grid">
+                <label class="pick" th:each="g : ${dsGv}"><input class="form-check-input mt-0" type="checkbox" th:field="*{thanhVienIds}" th:value="${g.id}">
+                    <span class="avatar" th:text="${g.initials}">A</span><span th:text="${g.nhan}">Giảng viên</span></label></div></div>
+        <div class="form-section"><h3>Vai trò</h3><p>Chủ tịch và thư ký phải là hai người khác nhau.</p>
+            <div class="row g-3">
+                <div class="col-md-6"><label class="form-label" for="chuTichId">Chủ tịch</label>
+                    <select class="form-select" th:field="*{chuTichId}"><option value="">Chọn chủ tịch</option>
+                        <option th:each="g : ${dsGv}" th:value="${g.id}" th:text="${g.nhan}">Giảng viên</option></select>
+                    <div class="field-error" th:if="${#fields.hasErrors('chuTichId')}" th:errors="*{chuTichId}"></div></div>
+                <div class="col-md-6"><label class="form-label" for="thuKyId">Thư ký</label>
+                    <select class="form-select" th:field="*{thuKyId}"><option value="">Chọn thư ký</option>
+                        <option th:each="g : ${dsGv}" th:value="${g.id}" th:text="${g.nhan}">Giảng viên</option></select>
+                    <div class="field-error" th:if="${#fields.hasErrors('thuKyId')}" th:errors="*{thuKyId}"></div></div>
+            </div></div>
+    </div>
+    <div class="panel-foot"><button class="btn btn-primary" type="submit">Lập hội đồng</button>
+        <a class="btn btn-light" th:href="@{/truong-khoa/dot/{id}/hoi-dong(id=${dot.id})}">Hủy</a></div>
+</form>
+</section>
+</body>
+</html>

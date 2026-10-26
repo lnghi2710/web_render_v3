@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:fragment="layout(title, active, content)">
+<head>
+    <title th:text="${title} + ' | Quản lý đề tài'">Quản lý đề tài</title>
+    <th:block th:replace="~{fragments/ui :: assets}"></th:block>
+</head>
+<body>
+<a class="skip-link" href="#main">Bỏ qua điều hướng</a>
+<div class="app">
+    <aside class="sidebar" id="sidebar" aria-label="Điều hướng chính">
+        <a class="sidebar-brand" th:href="@{/}">
+            <svg class="brand-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                <rect width="40" height="40" rx="9" fill="#0B7A75"/>
+                <path d="M10 27.5 16.5 20l5 4.5L30 12" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="10" cy="27.5" r="2.4" fill="#fff"/><circle cx="30" cy="12" r="2.4" fill="#fff"/>
+            </svg>
+            <span class="brand-name">Quản lý đề tài<small>Khoa Công nghệ thông tin</small></span>
+        </a>
+        <nav class="sidebar-nav">
+        <a class="side-link" th:classappend="${active == 'home'} ? 'is-active'" th:href="@{/}"><i class="bi bi-grid-1x2"></i><span>Tổng quan</span></a>
+        <div class="nav-group" sec:authorize="hasRole('ADMIN')">
+            <div class="nav-title">Quản trị</div>
+            <a class="side-link" th:classappend="${active == 'tongquan'} ? 'is-active'" th:href="@{/admin/tong-quan}"><i class="bi bi-speedometer2"></i><span>Tổng quan hệ thống</span></a>
+            <a class="side-link" th:classappend="${active == 'tk'} ? 'is-active'" th:href="@{/admin/tai-khoan}"><i class="bi bi-people"></i><span>Tài khoản</span></a>
+            <a class="side-link" th:classappend="${active == 'nhap'} ? 'is-active'" th:href="@{/admin/nhap-tai-khoan}"><i class="bi bi-file-earmark-arrow-up"></i><span>Nhập tài khoản hàng loạt</span></a>
+            <a class="side-link" th:classappend="${active == 'bomon'} ? 'is-active'" th:href="@{/admin/bo-mon}"><i class="bi bi-diagram-3"></i><span>Bộ môn</span></a>
+            <a class="side-link" th:classappend="${active == 'cauhinh'} ? 'is-active'" th:href="@{/admin/cau-hinh}"><i class="bi bi-sliders"></i><span>Cấu hình</span></a>
+            <a class="side-link" th:classappend="${active == 'nhatky'} ? 'is-active'" th:href="@{/admin/nhat-ky}"><i class="bi bi-clock-history"></i><span>Nhật ký thao tác</span></a>
+        </div>
+        <div class="nav-group" sec:authorize="hasRole('TRUONG_KHOA')">
+            <div class="nav-title">Quản lý đợt</div>
+            <a class="side-link" th:classappend="${active == 'dot'} ? 'is-active'" th:href="@{/truong-khoa/dot}"><i class="bi bi-calendar2-week"></i><span>Đợt đăng ký</span></a>
+            <a class="side-link" th:classappend="${active == 'hopduyet'} ? 'is-active'" th:href="@{/truong-khoa/hop-duyet}"><i class="bi bi-inbox"></i><span>Hộp duyệt</span><span class="side-badge" th:if="${chuong != null and chuong.choDuyet() gt 0}" th:text="${chuong.choDuyet()}">0</span></a>
+            <a class="side-link" th:classappend="${active == 'tiendo'} ? 'is-active'" th:href="@{/truong-khoa/tien-do}"><i class="bi bi-bar-chart-steps"></i><span>Tiến độ đợt</span></a>
+            <a class="side-link" th:classappend="${active == 'khoiluong'} ? 'is-active'" th:href="@{/truong-khoa/khoi-luong}"><i class="bi bi-person-workspace"></i><span>Khối lượng giảng viên</span></a>
+            <a class="side-link" th:classappend="${active == 'svchuanhom'} ? 'is-active'" th:href="@{/truong-khoa/sv-chua-nhom}"><i class="bi bi-person-exclamation"></i><span>SV chưa có nhóm</span></a>
+            <a class="side-link" th:classappend="${active == 'lich'} ? 'is-active'" th:href="@{/lich-bao-ve}"><i class="bi bi-calendar-event"></i><span>Lịch bảo vệ</span></a>
+            <a class="side-link" th:classappend="${active == 'xuatdiem'} ? 'is-active'" th:href="@{/truong-khoa/xuat-diem}"><i class="bi bi-file-earmark-spreadsheet"></i><span>Xuất bảng điểm</span></a>
+        </div>
+        <div class="nav-group" sec:authorize="hasRole('GIANG_VIEN')">
+            <div class="nav-title">Hướng dẫn và chấm</div>
+            <a class="side-link" th:classappend="${active == 'detai'} ? 'is-active'" th:href="@{/giang-vien/de-tai}"><i class="bi bi-journal-text"></i><span>Đề tài của tôi</span></a>
+            <a class="side-link" th:classappend="${active == 'nhom'} ? 'is-active'" th:href="@{/giang-vien/nhom}"><i class="bi bi-clipboard-check"></i><span>Nhóm và chấm điểm</span></a>
+            <a class="side-link" th:classappend="${active == 'vieccancham'} ? 'is-active'" th:href="@{/giang-vien/viec-can-cham}"><i class="bi bi-list-check"></i><span>Việc cần chấm</span><span class="side-badge" th:if="${chuong != null and chuong.canCham() gt 0}" th:text="${chuong.canCham()}">0</span></a>
+            <a class="side-link" th:classappend="${active == 'lichgv'} ? 'is-active'" th:href="@{/giang-vien/lich}"><i class="bi bi-calendar3"></i><span>Lịch của tôi</span></a>
+            <a class="side-link" th:classappend="${active == 'nhatkygv'} ? 'is-active'" th:href="@{/giang-vien/nhat-ky}"><i class="bi bi-journal-bookmark"></i><span>Nhật ký hướng dẫn</span></a>
+        </div>
+        <div class="nav-group" sec:authorize="hasRole('SINH_VIEN')">
+            <div class="nav-title">Đồ án</div>
+            <a class="side-link" th:classappend="${active == 'svdot'} ? 'is-active'" th:href="@{/sinh-vien/dot}"><i class="bi bi-mortarboard"></i><span>Đợt đăng ký</span></a>
+            <a class="side-link" th:classappend="${active == 'svnhom'} ? 'is-active'" th:href="@{/sinh-vien/nhom-cua-toi}"><i class="bi bi-people"></i><span>Nhóm của tôi</span></a>
+            <a class="side-link" th:classappend="${active == 'kho'} ? 'is-active'" th:href="@{/sinh-vien/kho-de-tai}"><i class="bi bi-collection"></i><span>Kho đề tài</span></a>
+            <a class="side-link" th:classappend="${active == 'loimoi'} ? 'is-active'" th:href="@{/sinh-vien/loi-moi}"><i class="bi bi-envelope-paper"></i><span>Lời mời nhóm</span><span class="side-badge" th:if="${chuong != null and chuong.loiMoi() gt 0}" th:text="${chuong.loiMoi()}">0</span></a>
+            <a class="side-link" th:classappend="${active == 'timban'} ? 'is-active'" th:href="@{/sinh-vien/tim-ban}"><i class="bi bi-person-plus"></i><span>Tìm bạn ghép nhóm</span></a>
+            <a class="side-link" th:classappend="${active == 'lich'} ? 'is-active'" th:href="@{/lich-bao-ve}"><i class="bi bi-calendar-event"></i><span>Lịch bảo vệ</span></a>
+            <a class="side-link" th:classappend="${active == 'nhatkysv'} ? 'is-active'" th:href="@{/sinh-vien/nhat-ky}"><i class="bi bi-journal-bookmark"></i><span>Nhật ký hướng dẫn</span></a>
+        </div>
+        <div class="nav-group">
+            <div class="nav-title">Chung</div>
+            <a class="side-link" th:classappend="${active == 'tb'} ? 'is-active'" th:href="@{/thong-bao}"><i class="bi bi-megaphone"></i><span>Thông báo của khoa</span></a>
+            <a class="side-link" sec:authorize="hasAnyRole('ADMIN','TRUONG_KHOA')" th:classappend="${active == 'dangtb'} ? 'is-active'" th:href="@{/dang-thong-bao}"><i class="bi bi-pencil-square"></i><span>Đăng thông báo</span></a>
+            <a class="side-link" th:classappend="${active == 'hoso'} ? 'is-active'" th:href="@{/ho-so}"><i class="bi bi-person-circle"></i><span>Hồ sơ cá nhân</span></a>
+        </div>
+        </nav>
+        <div class="side-user">
+            <a class="who" th:href="@{/ho-so}" title="Hồ sơ cá nhân">
+                <span class="avatar" th:text="${#authentication.principal.initials}">A</span>
+                <div><div class="name" th:text="${#authentication.principal.fullName}">Họ tên</div>
+                    <div class="role" th:text="${#authentication.principal.roleLabel}">Vai trò</div></div>
+            </a>
+            <div class="side-actions">
+                <a class="btn btn-sm btn-outline-secondary" th:href="@{/doi-mat-khau}"><i class="bi bi-key"></i>Đổi mật khẩu</a>
+                <form th:action="@{/logout}" method="post" class="d-contents" style="display:contents">
+                    <button class="btn btn-sm btn-outline-secondary" type="submit"><i class="bi bi-box-arrow-right"></i>Đăng xuất</button>
+                </form>
+            </div>
+        </div>
+    </aside>
+    <div class="scrim" id="scrim"></div>
+
+    <div class="main">
+        <div class="topbar">
+            <button class="btn btn-sm btn-outline-secondary" type="button" data-toggle-sidebar aria-label="Mở menu"><i class="bi bi-list"></i></button>
+            <strong th:text="${title}">Trang</strong>
+            <div class="ms-auto"><th:block th:replace="~{fragments/ui :: bell(${chuong})}"></th:block></div>
+        </div>
+        <div class="util-bar"><th:block th:replace="~{fragments/ui :: bell(${chuong})}"></th:block></div>
+        <main class="content" id="main" tabindex="-1">
+            <div class="notice notice-err" th:if="${error}" role="alert">
+                <i class="bi bi-exclamation-octagon-fill"></i><span th:text="${error}">Lỗi</span>
+                <button type="button" class="close" aria-label="Đóng"><i class="bi bi-x-lg"></i></button></div>
+            <div class="notice notice-ok" th:if="${success}" role="status">
+                <i class="bi bi-check-circle-fill"></i><span th:text="${success}">Thành công</span>
+                <button type="button" class="close" aria-label="Đóng"><i class="bi bi-x-lg"></i></button></div>
+            <th:block th:replace="${content}"></th:block>
+        </main>
+    </div>
+</div>
+
+<!-- Hộp thoại xác nhận dùng chung: form có thuộc tính data-confirm sẽ hiện hộp này trước khi gửi -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+        <div class="modal-header"><h2 class="modal-title h5" id="confirmTitle">Xác nhận</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button></div>
+        <div class="modal-body" id="confirmBody"></div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+            <button type="button" class="btn btn-primary" id="confirmOk">Đồng ý</button></div>
+    </div></div>
+</div>
+<script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

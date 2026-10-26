@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Đề tài đã công bố', 'svdot', ~{::section})}">
+<body>
+<section>
+<div class="crumbs"><a th:href="@{/sinh-vien/dot}">Đợt đăng ký</a><span class="sep"></span><span th:text="${dot.tenDot}">Đợt</span></div>
+<div class="page-head"><div><h1>Đề tài đã công bố</h1><p class="sub">Nhóm đăng ký trước được nhận đề tài. Mỗi nhóm chọn một đề tài.</p></div></div>
+<div class="notice notice-info" th:if="${nhom == null}"><i class="bi bi-info-circle-fill"></i>
+    <span>Bạn cần <a th:href="@{/sinh-vien/dot/{id}/nhom(id=${dot.id})}">tạo hoặc tham gia một nhóm</a> trước khi đăng ký đề tài.</span></div>
+<div class="notice notice-ok" th:if="${nhom != null and nhom.deTai != null}"><i class="bi bi-check-circle-fill"></i>
+    <span>Nhóm đã đăng ký: <strong th:text="${nhom.deTai.tenDeTai}">Đề tài</strong></span>
+    <form class="ms-auto" th:if="${laTruong and dot.trongThoiGianSv()}" th:action="@{/sinh-vien/nhom/{id}/huy-de-tai(id=${nhom.id})}" method="post" data-confirm="Hủy đăng ký đề tài?" data-confirm-style="danger">
+        <button class="btn btn-sm btn-outline-danger">Hủy đăng ký</button></form></div>
+<div class="notice notice-warn" th:unless="${dot.trongThoiGianSv()}"><i class="bi bi-clock"></i><span>Hiện không trong thời gian sinh viên đăng ký, nên chưa thể đăng ký hoặc đổi đề tài.</span></div>
+<div class="panel">
+    <div class="table-wrap" th:if="${!#lists.isEmpty(dsDeTai)}"><table class="data-table" data-grid>
+        <thead><tr><th>Đề tài</th><th>Bộ môn</th><th>Giảng viên hướng dẫn</th><th>Tình trạng</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="d : ${dsDeTai}">
+            <td style="min-width:320px"><div class="cell-title" th:text="${d.tenDeTai}">Tên đề tài</div><div class="clamp pre-wrap" th:text="${d.moTa}">Mô tả</div></td>
+            <td th:text="${d.boMon.tenBoMon}">Bộ môn</td><td th:text="${d.tenGvhds}">Giảng viên</td>
+            <td><span class="chip chip-ok" th:if="${d.nhom == null}">Còn trống</span><span class="chip" th:if="${d.nhom != null}">Đã có nhóm</span></td>
+            <td class="shrink"><form th:if="${laTruong and nhom.deTai == null and d.nhom == null and dot.trongThoiGianSv()}" th:action="@{/sinh-vien/nhom/{id}/de-tai(id=${nhom.id})}" method="post">
+                <input type="hidden" name="deTaiId" th:value="${d.id}"><button class="btn btn-sm btn-primary">Đăng ký đề tài</button></form></td></tr>
+        </tbody></table></div>
+    <div class="empty" th:if="${#lists.isEmpty(dsDeTai)}"><i class="bi bi-journal-text"></i><strong>Chưa có đề tài nào được công bố</strong>Đề tài xuất hiện sau khi Trưởng khoa duyệt.</div>
+</div>
+</section>
+</body>
+</html>

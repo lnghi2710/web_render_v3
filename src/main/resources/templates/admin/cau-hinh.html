@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Cấu hình', 'cauhinh', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Cấu hình</h1><p class="sub">Quy tắc áp dụng cho nhóm và cách tính điểm cuối.</p></div></div>
+<form th:action="@{/admin/cau-hinh}" th:object="${form}" method="post" class="panel" style="max-width:640px">
+    <div class="panel-body">
+        <div class="form-section"><h3>Nhóm sinh viên</h3><p>Số sinh viên tối đa trong một nhóm (kể cả nhóm trưởng).</p>
+            <input type="number" class="form-control" style="max-width:9rem" min="1" max="10" th:field="*{svToiDa}">
+            <div class="field-error" th:if="${#fields.hasErrors('svToiDa')}" th:errors="*{svToiDa}"></div></div>
+        <div class="form-section"><h3>Trọng số điểm</h3>
+            <p>Điểm cuối là trung bình có trọng số của các điểm thành phần của đợt. Để các trọng số bằng nhau thì là trung bình cộng. Chỉ áp dụng khi công bố các đợt từ nay.</p>
+            <div class="row g-3">
+                <div class="col-sm-4"><label class="form-label" for="trongSoGvhd">Điểm GVHD</label>
+                    <input type="number" step="0.1" min="0.1" max="10" class="form-control" th:field="*{trongSoGvhd}">
+                    <div class="field-error" th:if="${#fields.hasErrors('trongSoGvhd')}" th:errors="*{trongSoGvhd}"></div></div>
+                <div class="col-sm-4"><label class="form-label" for="trongSoGvpb">Điểm GVPB</label>
+                    <input type="number" step="0.1" min="0.1" max="10" class="form-control" th:field="*{trongSoGvpb}">
+                    <div class="field-error" th:if="${#fields.hasErrors('trongSoGvpb')}" th:errors="*{trongSoGvpb}"></div></div>
+                <div class="col-sm-4"><label class="form-label" for="trongSoHoiDong">Điểm hội đồng</label>
+                    <input type="number" step="0.1" min="0.1" max="10" class="form-control" th:field="*{trongSoHoiDong}">
+                    <div class="field-error" th:if="${#fields.hasErrors('trongSoHoiDong')}" th:errors="*{trongSoHoiDong}"></div></div>
+            </div></div>
+    </div>
+    <div class="panel-foot"><button class="btn btn-primary" type="submit">Lưu cấu hình</button></div>
+</form>
+</section>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Xuất bảng điểm', 'xuatdiem', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Xuất bảng điểm</h1>
+    <p class="sub">Tải bảng điểm từng đợt dạng CSV (UTF-8), mở được bằng Excel. Đợt chưa công bố xuất điểm tạm tính.</p></div></div>
+<div class="panel">
+    <div class="table-wrap" th:if="${!#lists.isEmpty(dsDot)}"><table class="data-table" data-grid>
+        <thead><tr><th>Đợt</th><th>Loại</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody><tr th:each="d : ${dsDot}">
+            <td class="cell-title" th:text="${d.tenDot}">Đợt</td>
+            <td th:text="${d.loai.nhan}">Loại</td>
+            <td><span class="chip" th:classappend="'chip-' + ${d.trangThaiHienTai.mau}" th:text="${d.trangThaiHienTai.nhan}">Trạng thái</span></td>
+            <td class="shrink"><a class="btn btn-sm btn-primary" th:href="@{/truong-khoa/dot/{id}/xuat-diem(id=${d.id})}"><i class="bi bi-download"></i>Tải CSV</a>
+                <a class="btn btn-sm btn-outline-secondary" th:href="@{/truong-khoa/dot/{id}/diem(id=${d.id})}">Xem bảng điểm</a></td></tr></tbody></table></div>
+    <div class="empty" th:if="${#lists.isEmpty(dsDot)}"><i class="bi bi-file-earmark-spreadsheet"></i><strong>Chưa có đợt nào</strong></div>
+</div>
+</section>
+</body>
+</html>

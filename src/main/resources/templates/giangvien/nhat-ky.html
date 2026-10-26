@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Nhật ký hướng dẫn', 'nhatkygv', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Nhật ký hướng dẫn</h1>
+    <p class="sub">Ghi lại từng buổi làm việc với nhóm bạn hướng dẫn. Sinh viên trong nhóm xem được nhật ký.</p></div></div>
+<div class="panel">
+    <div class="table-wrap" th:if="${!#lists.isEmpty(dsNhom)}"><table class="data-table" data-grid>
+        <thead><tr><th>Nhóm</th><th>Đề tài</th><th class="num">Số buổi</th><th>Buổi gần nhất</th><th></th></tr></thead>
+        <tbody><tr th:each="n : ${dsNhom}">
+            <td style="min-width:200px"><div class="cell-title" th:text="${n.tenNhom}">Nhóm</div><div class="sub-text" th:text="${n.dot.tenDot}">Đợt</div></td>
+            <td style="min-width:240px" th:text="${n.deTai.tenDeTai}">Đề tài</td>
+            <td class="num" th:text="${soBuoi.get(n.id)}">0</td>
+            <td th:attr="data-sort=${moiNhat.get(n.id) != null ? #temporals.format(moiNhat.get(n.id).thoiGian,'dd/MM/yyyy HH:mm') : ''}"
+                th:text="${moiNhat.get(n.id) != null} ? ${#temporals.format(moiNhat.get(n.id).thoiGian,'dd/MM/yyyy HH:mm')} : 'Chưa có'">time</td>
+            <td class="shrink"><a class="btn btn-sm btn-primary" th:href="@{/giang-vien/nhom/{id}/nhat-ky(id=${n.id})}"><i class="bi bi-journal-plus"></i>Mở nhật ký</a></td></tr></tbody></table></div>
+    <div class="empty" th:if="${#lists.isEmpty(dsNhom)}"><i class="bi bi-journal-bookmark"></i><strong>Bạn chưa hướng dẫn nhóm nào</strong>Nhóm hiện ở đây khi sinh viên đăng ký đề tài của bạn.</div>
+</div>
+</section>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Đợt đăng ký', 'svdot', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Đợt đăng ký</h1><p class="sub">Chọn một đợt để lập nhóm, xem đề tài đã công bố, nộp báo cáo và xem kết quả.</p></div></div>
+<div class="panel dot-card" th:each="d : ${dsDot}">
+    <div class="panel-body">
+        <div class="dot-title"><h2 th:text="${d.tenDot}">Đợt</h2>
+            <span class="chip chip-plain chip-info" th:text="${d.loai.nhan}">Loại</span>
+            <span class="chip" th:classappend="'chip-' + ${d.trangThaiHienTai.mau}" th:text="${d.trangThaiHienTai.nhan}">Trạng thái</span></div>
+        <ol class="phase" th:replace="~{fragments/ui :: phase(${d})}"></ol>
+        <div class="dates"><div>Sinh viên đăng ký<b th:text="${#temporals.format(d.svBatDau,'dd/MM/yyyy HH:mm')} + ' đến ' + ${#temporals.format(d.svKetThuc,'dd/MM/yyyy HH:mm')}">...</b></div></div>
+        <div class="toolbar">
+            <a class="btn btn-sm btn-primary" th:href="@{/sinh-vien/dot/{id}/nhom(id=${d.id})}"><i class="bi bi-people"></i>Nhóm của tôi</a>
+            <a class="btn btn-sm btn-outline-primary" th:href="@{/sinh-vien/dot/{id}/de-tai(id=${d.id})}"><i class="bi bi-journal-text"></i>Đề tài đã công bố</a>
+            <a class="btn btn-sm btn-outline-primary" th:href="@{/sinh-vien/dot/{id}/ket-qua(id=${d.id})}"><i class="bi bi-award"></i>Kết quả</a></div>
+    </div>
+</div>
+<div class="panel" th:if="${#lists.isEmpty(dsDot)}"><div class="empty"><i class="bi bi-calendar2-week"></i><strong>Chưa có đợt đăng ký nào</strong>Khi khoa mở đợt mới, bạn sẽ thấy ở đây.</div></div>
+</section>
+</body>
+</html>

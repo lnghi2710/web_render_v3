@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Phản biện quá hạn', 'dot', ~{::section})}">
+<body>
+<section>
+<div class="crumbs"><a th:href="@{/truong-khoa/dot}">Đợt đăng ký</a><span class="sep"></span><span th:text="${dot.tenDot}">Đợt</span></div>
+<div class="page-head"><div><h1>Phản biện quá hạn nộp điểm</h1>
+    <p class="sub" th:text="${dot.hanNopDiemGvpb != null} ? 'Hạn nộp điểm: ' + ${#temporals.format(dot.hanNopDiemGvpb,'dd/MM/yyyy HH:mm')} + '. Quá hạn chỉ để nhắc nhở, giảng viên vẫn nhập điểm được.' : 'Đợt này chưa đặt hạn nộp điểm phản biện.'">Hạn</p></div></div>
+<div class="panel">
+    <div class="table-wrap" th:if="${!#lists.isEmpty(dsNhom)}"><table class="data-table" data-grid>
+        <thead><tr><th>Giảng viên phản biện</th><th>Nhóm</th><th>Đề tài</th></tr></thead>
+        <tbody><tr th:each="n : ${dsNhom}"><td th:text="${n.gvpb.nhan}">GV</td><td class="cell-title" th:text="${n.tenNhom}">Nhóm</td><td th:text="${n.deTai.tenDeTai}">Đề tài</td></tr></tbody></table></div>
+    <div class="empty" th:if="${#lists.isEmpty(dsNhom)}"><i class="bi bi-check2-circle"></i><strong>Không có giảng viên phản biện nào quá hạn</strong></div>
+</div>
+</section>
+</body>
+</html>

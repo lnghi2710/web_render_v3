@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Kết quả', 'svdot', ~{::section})}">
+<body>
+<section>
+<div class="crumbs"><a th:href="@{/sinh-vien/dot}">Đợt đăng ký</a><span class="sep"></span><span th:text="${dot.tenDot}">Đợt</span></div>
+<div class="page-head"><div><h1>Điểm và kết quả</h1><p class="sub" th:text="${dot.tenDot} + ' (' + ${dot.loai.nhan} + ')'">Đợt</p></div></div>
+<div class="notice notice-info" th:if="${nhom == null}"><i class="bi bi-info-circle-fill"></i><span>Bạn không thuộc nhóm nào trong đợt này.</span></div>
+<th:block th:if="${nhom != null}">
+    <div class="notice notice-info" th:unless="${ketQua.daCongBo()}"><i class="bi bi-hourglass-split"></i><span>Kết quả chưa được công bố. Hãy quay lại sau khi khoa thông báo.</span></div>
+    <div class="row g-4" th:if="${ketQua.daCongBo()}">
+        <div class="col-lg-4"><div class="panel"><div class="panel-body text-center py-4">
+            <div class="sub-text mb-1">Điểm cuối</div>
+            <div class="score-lg" th:text="${ketQua.diemCuoi()} ?: '—'">9.0</div>
+            <div class="mt-3 cell-title" th:text="${nhom.tenNhom}">Nhóm</div>
+            <div class="sub-text" th:if="${nhom.deTai != null}" th:text="${nhom.deTai.tenDeTai}">Đề tài</div></div></div></div>
+        <div class="col-lg-8"><div class="panel"><div class="panel-head"><h2>Điểm thành phần</h2></div>
+            <div class="table-wrap"><table class="data-table">
+                <thead><tr><th>Thành phần</th><th class="num">Điểm</th><th>Nhận xét</th></tr></thead>
+                <tbody><tr th:each="d : ${ketQua.diems()}">
+                    <td th:text="${d.loai.nhan}">Loại</td><td class="num"><span class="score" th:text="${d.diem}">8</span></td>
+                    <td class="pre-wrap" th:text="${d.nhanXet != null} ? ${d.nhanXet} : '—'">Nhận xét</td></tr></tbody></table></div></div></div>
+    </div>
+</th:block>
+</section>
+</body>
+</html>

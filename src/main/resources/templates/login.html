@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <title>Đăng nhập | Quản lý đề tài</title>
+    <th:block th:replace="~{fragments/ui :: assets}"></th:block>
+</head>
+<body>
+<div class="login">
+    <div class="login-art">
+        <div class="login-org">
+            <strong>Khoa Công nghệ thông tin</strong>
+            <span>Trường Đại học Công nghệ Kỹ thuật Thành phố Hồ Chí Minh</span>
+        </div>
+        <div>
+            <h1>Từ đăng ký đề tài đến công bố điểm</h1>
+            <p></p>
+            <ol class="login-steps">
+                <li><span class="pin"></span><span><b>Giảng viên</b> đăng ký đề tài</span></li>
+                <li><span class="pin"></span><span><b>Trưởng khoa</b> duyệt và công bố danh sách đề tài</span></li>
+                <li><span class="pin"></span><span><b>Sinh viên</b> lập nhóm và chọn đề tài</span></li>
+                <li><span class="pin"></span><span>Nộp báo cáo, giảng viên và hội đồng chấm điểm</span></li>
+                <li><span class="pin"></span><span>Trưởng khoa công bố kết quả</span></li>
+            </ol>
+        </div>
+        <small style="color:#7F93AD">Tài khoản do quản trị viên cấp. Liên hệ văn phòng khoa nếu bạn chưa có tài khoản.</small>
+    </div>
+    <div class="login-form">
+        <div class="box">
+            <div class="login-id">
+                <img th:src="@{/images/hcmute-logo.png}" width="81" height="104"
+                     alt="Logo Trường Đại học Công nghệ Kỹ thuật Thành phố Hồ Chí Minh (HCMUTE)">
+                <div class="school">Trường Đại học Công nghệ Kỹ thuật
+                    <small>Thành phố Hồ Chí Minh</small></div>
+            </div>
+            <h2>Đăng nhập</h2>
+            <p class="text-muted mb-4">Dùng tài khoản do khoa cấp.</p>
+            <div class="notice notice-err" th:if="${param.error}" role="alert"><i class="bi bi-exclamation-octagon-fill"></i>
+                <span>Sai tên đăng nhập hoặc mật khẩu, hoặc tài khoản đã bị khóa.</span></div>
+            <div class="notice notice-info" th:if="${param.logout}" role="status"><i class="bi bi-info-circle-fill"></i><span>Bạn đã đăng xuất.</span></div>
+            <form th:action="@{/login}" method="post">
+                <div class="mb-3"><label class="form-label" for="username">Tên đăng nhập</label>
+                    <input class="form-control" id="username" name="username" autocomplete="username" autofocus required></div>
+                <div class="mb-4"><label class="form-label" for="password">Mật khẩu</label>
+                    <input class="form-control" type="password" id="password" name="password" autocomplete="current-password" required></div>
+                <button class="btn btn-primary w-100" type="submit">Đăng nhập</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

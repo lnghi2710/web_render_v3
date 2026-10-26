@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Bảng điểm', 'dot', ~{::section})}">
+<body>
+<section>
+<div class="crumbs"><a th:href="@{/truong-khoa/dot}">Đợt đăng ký</a><span class="sep"></span><span th:text="${dot.tenDot}">Đợt</span></div>
+<div class="page-head"><div><h1>Bảng điểm và công bố</h1>
+    <p class="sub">Điểm cuối là trung bình các điểm thành phần theo trọng số cấu hình (mặc định bằng nhau). Chỉ công bố được khi mọi nhóm đã đủ điểm.</p></div>
+    <div class="page-actions">
+        <a class="btn btn-outline-primary" th:href="@{/truong-khoa/dot/{id}/xuat-diem(id=${dot.id})}"><i class="bi bi-download"></i>Xuất CSV</a>
+        <form th:unless="${dot.daCongBo}" th:action="@{/truong-khoa/dot/{id}/cong-bo(id=${dot.id})}" method="post" data-confirm="Công bố kết quả? Điểm cuối sẽ được tính và lưu, sau đó không thể sửa điểm.">
+            <button class="btn btn-success"><i class="bi bi-megaphone"></i>Công bố kết quả</button></form></div></div>
+<div class="panel"><div class="panel-body"><ol class="phase" th:replace="~{fragments/ui :: phase(${dot})}"></ol></div></div>
+<div class="panel">
+    <div class="table-wrap" th:if="${!#lists.isEmpty(dsNhom)}"><table class="data-table" data-grid>
+        <thead><tr><th>Nhóm</th><th>Đề tài</th><th class="num">Điểm hướng dẫn</th>
+            <th class="num" th:if="${dot.loai.coGvpb()}">Điểm phản biện</th><th class="num" th:if="${dot.loai.coHoiDong()}">Điểm hội đồng</th><th class="num">Điểm cuối</th></tr></thead>
+        <tbody>
+        <tr th:each="n : ${dsNhom}">
+            <td class="cell-title" th:text="${n.tenNhom}">Nhóm</td><td th:text="${n.deTai.tenDeTai}">Đề tài</td>
+            <td class="num"><span class="score" th:if="${bangDiem[n.id]['GVHD'] != null}" th:text="${bangDiem[n.id]['GVHD'].diem}">8</span><span class="muted-dash" th:unless="${bangDiem[n.id]['GVHD'] != null}">Chưa có</span></td>
+            <td class="num" th:if="${dot.loai.coGvpb()}"><span class="score" th:if="${bangDiem[n.id]['GVPB'] != null}" th:text="${bangDiem[n.id]['GVPB'].diem}">8</span><span class="muted-dash" th:unless="${bangDiem[n.id]['GVPB'] != null}">Chưa có</span></td>
+            <td class="num" th:if="${dot.loai.coHoiDong()}"><span class="score" th:if="${bangDiem[n.id]['HOI_DONG'] != null}" th:text="${bangDiem[n.id]['HOI_DONG'].diem}">8</span><span class="muted-dash" th:unless="${bangDiem[n.id]['HOI_DONG'] != null}">Chưa có</span></td>
+            <td class="num"><span class="score" th:if="${n.diemCuoi != null}" th:text="${n.diemCuoi}">8.5</span><span class="muted-dash" th:unless="${n.diemCuoi != null}">Chưa công bố</span></td></tr>
+        </tbody></table></div>
+    <div class="empty" th:if="${#lists.isEmpty(dsNhom)}"><i class="bi bi-table"></i><strong>Chưa có nhóm nào đăng ký đề tài</strong></div>
+</div>
+</section>
+</body>
+</html>

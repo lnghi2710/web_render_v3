@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Nhập điểm', 'nhom', ~{::section})}">
+<body>
+<section>
+<div class="crumbs"><a th:href="@{/giang-vien/nhom}">Nhóm và chấm điểm</a><span class="sep"></span><span th:text="${nhom.tenNhom}">Nhóm</span></div>
+<div class="page-head"><div><h1 th:text="${loai.nhan}">Nhập điểm</h1><p class="sub" th:text="'Nhóm ' + ${nhom.tenNhom} + ', ' + ${nhom.dot.tenDot}">Nhóm</p></div></div>
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="panel"><div class="panel-head"><h2>Thông tin nhóm</h2></div>
+            <div class="panel-body"><dl class="kv">
+                <dt>Đề tài</dt><dd><strong th:text="${nhom.deTai.tenDeTai}">Đề tài</strong>
+                    <div class="sub-text pre-wrap mt-1" th:text="${nhom.deTai.moTa}">Mô tả</div></dd>
+                <dt>Hướng dẫn</dt><dd th:text="${nhom.deTai.tenGvhds}">Giảng viên</dd>
+                <dt>Thành viên</dt><dd><div th:each="tv : ${nhom.thanhViens}" th:text="${tv.sinhVien.nhan} + (${tv.laNhomTruong} ? ' (nhóm trưởng)' : '')">sv</div></dd>
+                <dt>Báo cáo</dt><dd><a th:if="${nhom.fileBaoCao != null}" th:href="@{/giang-vien/nhom/{id}/bao-cao(id=${nhom.id})}"><i class="bi bi-file-earmark-pdf"></i>Tải báo cáo PDF</a>
+                    <span class="muted-dash" th:unless="${nhom.fileBaoCao != null}">Nhóm chưa nộp</span></dd>
+            </dl></div></div>
+    </div>
+    <div class="col-lg-6">
+        <form th:action="@{/giang-vien/nhom/{id}/diem(id=${nhom.id})}" th:object="${form}" method="post" class="panel">
+            <input type="hidden" th:field="*{loai}">
+            <div class="panel-head"><h2>Chấm điểm</h2></div>
+            <div class="panel-body">
+                <div class="notice notice-info" th:if="${loai.name() == 'HOI_DONG'}"><i class="bi bi-info-circle-fill"></i>
+                    <span>Chủ tịch nhập điểm hội đồng sau khi tổng hợp đánh giá của các thành viên. Cả nhóm nhận cùng một điểm.</span></div>
+                <div class="mb-3"><label class="form-label" for="diem">Điểm (từ 0 đến 10)</label>
+                    <input type="number" step="0.01" min="0" max="10" class="form-control score-input" th:field="*{diem}">
+                    <div class="field-error" th:if="${#fields.hasErrors('diem')}" th:errors="*{diem}"></div></div>
+                <div><label class="form-label" for="nhanXet">Nhận xét</label><textarea class="form-control" rows="6" th:field="*{nhanXet}"></textarea>
+                    <div class="field-error" th:if="${#fields.hasErrors('nhanXet')}" th:errors="*{nhanXet}"></div></div>
+            </div>
+            <div class="panel-foot"><button class="btn btn-primary" type="submit">Lưu điểm</button> <a class="btn btn-light" th:href="@{/giang-vien/nhom}">Hủy</a></div>
+        </form>
+    </div>
+</div>
+</section>
+</body>
+</html>

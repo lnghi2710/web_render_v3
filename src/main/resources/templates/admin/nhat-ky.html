@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Nhật ký thao tác', 'nhatky', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Nhật ký thao tác</h1><p class="sub">Tạo, sửa, duyệt, phân công, nhập điểm và công bố; mới nhất xếp trước.</p></div></div>
+<div class="panel">
+    <div class="panel-head">
+        <form method="get" th:action="@{/admin/nhat-ky}" class="search-box"><i class="bi bi-search"></i>
+            <input type="search" name="q" th:value="${q}" class="form-control form-control-sm" placeholder="Lọc theo người, hành động, đối tượng" aria-label="Lọc nhật ký">
+            <input type="hidden" name="kichThuoc" th:value="${kichThuoc}"></form>
+        <span class="sub-text" th:text="${trang.totalElements} + ' thao tác'">0</span></div>
+    <div class="table-wrap" th:if="${!#lists.isEmpty(trang.content)}"><table class="data-table">
+        <thead><tr><th>Thời điểm</th><th>Người thực hiện</th><th>Hành động</th><th>Đối tượng</th></tr></thead>
+        <tbody><tr th:each="l : ${trang.content}">
+            <td class="shrink num" th:text="${#temporals.format(l.thoiGian,'dd/MM/yyyy HH:mm:ss')}">time</td>
+            <td th:text="${l.user != null} ? ${l.user.username} : 'Hệ thống'">user</td>
+            <td th:text="${l.hanhDong}">hành động</td><td class="sub-text" th:text="${l.doiTuong}">đối tượng</td></tr></tbody></table></div>
+    <div class="empty" th:if="${#lists.isEmpty(trang.content)}"><i class="bi bi-clock-history"></i><strong>Không có thao tác nào</strong></div>
+    <div class="panel-foot pager" th:if="${trang.totalPages gt 1}">
+        <span class="sub-text" th:text="'Trang ' + ${trang.number + 1} + '/' + ${trang.totalPages}">Trang 1/1</span>
+        <div>
+            <a class="btn btn-sm btn-outline-secondary" th:classappend="${trang.first} ? 'disabled'" th:href="@{/admin/nhat-ky(q=${q},trang=${trang.number - 1},kichThuoc=${kichThuoc})}"><i class="bi bi-chevron-left"></i>Trước</a>
+            <a class="btn btn-sm btn-outline-secondary" th:classappend="${trang.last} ? 'disabled'" th:href="@{/admin/nhat-ky(q=${q},trang=${trang.number + 1},kichThuoc=${kichThuoc})}">Sau<i class="bi bi-chevron-right ms-1 me-0"></i></a></div></div>
+</div>
+</section>
+</body>
+</html>

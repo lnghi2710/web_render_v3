@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Đăng thông báo', 'dangtb', ~{::section})}">
+<body>
+<section>
+<div class="crumbs"><a th:href="@{/thong-bao}">Thông báo</a><span class="sep"></span>Đăng thông báo</div>
+<div class="page-head"><div><h1>Đăng thông báo</h1><p class="sub">Thông báo hiển thị cho mọi người dùng sau khi đăng.</p></div></div>
+<form th:action="@{/dang-thong-bao}" th:object="${form}" method="post" class="panel" style="max-width:760px">
+    <div class="panel-body">
+        <div class="mb-3"><label class="form-label" for="tieuDe">Tiêu đề</label>
+            <input class="form-control" th:field="*{tieuDe}">
+            <div class="field-error" th:if="${#fields.hasErrors('tieuDe')}" th:errors="*{tieuDe}"></div></div>
+        <div><label class="form-label" for="noiDung">Nội dung</label>
+            <textarea class="form-control" rows="9" th:field="*{noiDung}"></textarea>
+            <div class="field-error" th:if="${#fields.hasErrors('noiDung')}" th:errors="*{noiDung}"></div></div>
+    </div>
+    <div class="panel-foot"><button class="btn btn-primary" type="submit">Đăng thông báo</button>
+        <a class="btn btn-light" th:href="@{/thong-bao}">Hủy</a></div>
+</form>
+</section>
+</body>
+</html>

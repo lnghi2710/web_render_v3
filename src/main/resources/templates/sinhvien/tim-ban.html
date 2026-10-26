@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Tìm bạn ghép nhóm', 'timban', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Tìm bạn ghép nhóm</h1>
+    <p class="sub">Sinh viên chưa có nhóm trong đợt. Nhóm trưởng gửi lời mời, bạn được mời đồng ý để vào nhóm.</p></div>
+    <form class="page-actions" method="get" th:action="@{/sinh-vien/tim-ban}" th:if="${!#lists.isEmpty(dsDot)}">
+        <label class="visually-hidden" for="dotId">Chọn đợt</label>
+        <select class="form-select" id="dotId" name="dotId" data-autosubmit>
+            <option th:each="d : ${dsDot}" th:value="${d.id}" th:text="${d.tenDot}" th:selected="${dot != null and d.id == dot.id}">Đợt</option></select>
+        <noscript><button class="btn btn-primary">Xem</button></noscript></form></div>
+<div class="panel" th:if="${dot == null}"><div class="empty"><i class="bi bi-person-plus"></i><strong>Chưa có đợt đăng ký nào</strong></div></div>
+<th:block th:if="${dot != null}">
+<div class="notice notice-info" th:if="${nhom == null}"><i class="bi bi-info-circle-fill"></i>
+    <span>Bạn chưa có nhóm trong đợt này. <a th:href="@{/sinh-vien/dot/{id}/nhom(id=${dot.id})}">Tạo nhóm</a> để mời bạn, hoặc chờ nhóm khác mời bạn.</span></div>
+<div class="notice notice-warn" th:if="${nhom != null and !laTruong}"><i class="bi bi-person-lock"></i><span>Chỉ nhóm trưởng được gửi lời mời.</span></div>
+<div class="notice notice-warn" th:if="${laTruong and !conCho}"><i class="bi bi-people"></i><span>Nhóm đã đủ thành viên.</span></div>
+<div class="notice notice-warn" th:unless="${dot.trongThoiGianSv()}"><i class="bi bi-clock"></i><span>Hiện không trong thời gian sinh viên đăng ký của đợt này.</span></div>
+<div class="panel">
+    <div class="panel-head"><div class="search-box"><i class="bi bi-search"></i>
+        <input type="search" class="form-control form-control-sm" placeholder="Tìm theo tên, mã SV, lớp" data-filter="#bangBan" aria-label="Tìm bạn"></div>
+        <span class="sub-text" th:text="${#lists.size(dsSv)} + ' sinh viên chưa có nhóm'">0</span></div>
+    <div class="table-wrap" th:if="${!#lists.isEmpty(dsSv)}"><table class="data-table" id="bangBan" data-grid>
+        <thead><tr><th>Sinh viên</th><th>Mã SV</th><th>Lớp</th><th></th></tr></thead>
+        <tbody><tr th:each="s : ${dsSv}" data-row>
+            <td><div class="person"><span class="avatar" th:text="${s.initials}">A</span><div class="name" th:text="${s.hoTen}">Họ tên</div></div></td>
+            <td th:text="${s.maSv}">Mã</td><td th:text="${s.lop}">Lớp</td>
+            <td class="shrink">
+                <span class="chip chip-info" th:if="${daMoi.contains(s.id)}">Đã mời</span>
+                <form th:if="${laTruong and conCho and dot.trongThoiGianSv() and !daMoi.contains(s.id)}" th:action="@{/sinh-vien/nhom/{id}/moi(id=${nhom.id})}" method="post">
+                    <input type="hidden" name="svId" th:value="${s.id}"><input type="hidden" name="dotId" th:value="${dot.id}">
+                    <button class="btn btn-sm btn-primary"><i class="bi bi-envelope-plus"></i>Mời vào nhóm</button></form></td></tr></tbody></table></div>
+    <div class="empty" th:if="${#lists.isEmpty(dsSv)}"><i class="bi bi-check2-circle"></i><strong>Mọi sinh viên đều đã có nhóm</strong></div>
+</div>
+</th:block>
+</section>
+</body>
+</html>

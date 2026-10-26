@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Nhật ký hướng dẫn', 'nhatkysv', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Nhật ký hướng dẫn</h1><p class="sub">Các buổi giảng viên hướng dẫn đã ghi cho nhóm của bạn.</p></div></div>
+<div class="panel" th:each="n : ${dsNhom}">
+    <div class="panel-head"><h2 th:text="${n.tenNhom}">Nhóm</h2><span class="sub-text" th:text="${n.dot.tenDot}">Đợt</span></div>
+    <ul class="timeline" th:if="${!#lists.isEmpty(nhatKy.get(n.id))}">
+        <li th:each="k : ${nhatKy.get(n.id)}">
+            <div class="when"><b th:text="${#temporals.format(k.thoiGian,'dd/MM/yyyy')}">01/01/2026</b><span th:text="${#temporals.format(k.thoiGian,'HH:mm')}">08:00</span></div>
+            <div><div class="pre-wrap" th:text="${k.noiDung}">Nội dung</div>
+                <div class="sub-text mt-1 pre-wrap" th:if="${k.viecTiepTheo != null}" th:text="'Việc tiếp theo: ' + ${k.viecTiepTheo}">Việc</div>
+                <div class="sub-text" th:text="${k.giangVien.hoTen}">GV</div></div></li></ul>
+    <div class="empty" th:if="${#lists.isEmpty(nhatKy.get(n.id))}"><i class="bi bi-journal-bookmark"></i><strong>Giảng viên chưa ghi buổi nào</strong></div>
+</div>
+<div class="panel" th:if="${#lists.isEmpty(dsNhom)}"><div class="empty"><i class="bi bi-people"></i><strong>Bạn chưa thuộc nhóm nào</strong></div></div>
+</section>
+</body>
+</html>

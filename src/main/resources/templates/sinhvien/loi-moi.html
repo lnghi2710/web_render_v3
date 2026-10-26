@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Lời mời nhóm', 'loimoi', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Lời mời nhóm</h1><p class="sub">Lời mời bạn nhận được và lời mời nhóm của bạn đã gửi.</p></div>
+    <div class="page-actions"><a class="btn btn-outline-primary" th:href="@{/sinh-vien/tim-ban}"><i class="bi bi-person-plus"></i>Tìm bạn ghép nhóm</a></div></div>
+<div class="panel">
+    <div class="panel-head"><h2>Lời mời dành cho bạn</h2></div>
+    <div class="table-wrap" th:if="${!#lists.isEmpty(dsNhan)}"><table class="data-table" data-grid>
+        <thead><tr><th>Nhóm</th><th>Đợt</th><th>Người mời</th><th>Ngày gửi</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody><tr th:each="l : ${dsNhan}">
+            <td class="cell-title" th:text="${l.nhom.tenNhom}">Nhóm</td><td th:text="${l.nhom.dot.tenDot}">Đợt</td>
+            <td th:text="${l.nguoiMoi.hoTen}">Người mời</td>
+            <td th:text="${#temporals.format(l.ngayTao,'dd/MM/yyyy HH:mm')}">time</td>
+            <td><span class="chip" th:classappend="'chip-' + ${l.trangThai.mau}" th:text="${l.trangThai.nhan}">Trạng thái</span></td>
+            <td class="shrink" style="min-width:200px"><th:block th:if="${l.trangThai.name() == 'CHO'}">
+                <form class="d-inline" th:action="@{/sinh-vien/loi-moi/{id}/dong-y(id=${l.id})}" method="post"><button class="btn btn-sm btn-success"><i class="bi bi-check-lg"></i>Đồng ý</button></form>
+                <form class="d-inline" th:action="@{/sinh-vien/loi-moi/{id}/tu-choi(id=${l.id})}" method="post" data-confirm="Từ chối lời mời này?"><button class="btn btn-sm btn-outline-secondary">Từ chối</button></form></th:block></td></tr></tbody></table></div>
+    <div class="empty" th:if="${#lists.isEmpty(dsNhan)}"><i class="bi bi-envelope-paper"></i><strong>Chưa có lời mời nào</strong></div>
+</div>
+<div class="panel">
+    <div class="panel-head"><h2>Lời mời nhóm bạn đã gửi</h2></div>
+    <div class="table-wrap" th:if="${!#lists.isEmpty(dsGui)}"><table class="data-table" data-grid>
+        <thead><tr><th>Sinh viên được mời</th><th>Nhóm</th><th>Ngày gửi</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody><tr th:each="l : ${dsGui}">
+            <td><div class="name" th:text="${l.sinhVien.hoTen}">Họ tên</div><small class="sub-text" th:text="${l.sinhVien.maSv}">Mã</small></td>
+            <td th:text="${l.nhom.tenNhom} + ' (' + ${l.nhom.dot.tenDot} + ')'">Nhóm</td>
+            <td th:text="${#temporals.format(l.ngayTao,'dd/MM/yyyy HH:mm')}">time</td>
+            <td><span class="chip" th:classappend="'chip-' + ${l.trangThai.mau}" th:text="${l.trangThai.nhan}">Trạng thái</span></td>
+            <td class="shrink"><form th:if="${l.trangThai.name() == 'CHO'}" th:action="@{/sinh-vien/loi-moi/{id}/huy(id=${l.id})}" method="post" data-confirm="Hủy lời mời này?" data-confirm-style="danger">
+                <button class="btn btn-sm btn-outline-danger">Thu hồi</button></form></td></tr></tbody></table></div>
+    <div class="empty" th:if="${#lists.isEmpty(dsGui)}"><i class="bi bi-send"></i><strong>Bạn chưa gửi lời mời nào</strong></div>
+</div>
+</section>
+</body>
+</html>

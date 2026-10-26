@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Hộp duyệt', 'hopduyet', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Hộp duyệt</h1>
+    <p class="sub" th:text="${#lists.size(dsDeTai)} + ' đề tài đang chờ duyệt ở các đợt chưa công bố, cũ nhất xếp trước.'">Tóm tắt</p></div></div>
+<div class="panel">
+    <div class="table-wrap" th:if="${!#lists.isEmpty(dsDeTai)}"><table class="data-table" data-grid>
+        <thead><tr><th>Đề tài</th><th>Đợt</th><th>Bộ môn</th><th>Giảng viên hướng dẫn</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="d : ${dsDeTai}">
+            <td style="min-width:300px"><div class="cell-title" th:text="${d.tenDeTai}">Tên đề tài</div><div class="clamp pre-wrap" th:text="${d.moTa}">Mô tả</div></td>
+            <td><a th:href="@{/truong-khoa/dot/{id}/de-tai(id=${d.dot.id})}" th:text="${d.dot.tenDot}">Đợt</a></td>
+            <td th:text="${d.boMon.tenBoMon}">Bộ môn</td>
+            <td th:text="${d.tenGvhds}">Giảng viên</td>
+            <td style="min-width:230px">
+                <form class="d-inline" th:action="@{/truong-khoa/de-tai/{id}/duyet(id=${d.id})}" method="post">
+                    <input type="hidden" name="ve" value="hop-duyet">
+                    <button class="btn btn-sm btn-success"><i class="bi bi-check-lg"></i>Duyệt</button></form>
+                <details class="reject d-inline-block ms-1"><summary class="btn btn-sm btn-outline-danger">Từ chối</summary>
+                    <form class="d-flex gap-1" th:action="@{/truong-khoa/de-tai/{id}/tu-choi(id=${d.id})}" method="post">
+                        <input type="hidden" name="ve" value="hop-duyet">
+                        <input name="lyDo" class="form-control form-control-sm" placeholder="Nêu lý do từ chối" required aria-label="Lý do từ chối">
+                        <button class="btn btn-sm btn-danger">Gửi</button></form></details></td></tr>
+        </tbody></table></div>
+    <div class="empty" th:if="${#lists.isEmpty(dsDeTai)}"><i class="bi bi-inbox"></i><strong>Hộp duyệt trống</strong>Không có đề tài nào đang chờ duyệt.</div>
+</div>
+</section>
+</body>
+</html>

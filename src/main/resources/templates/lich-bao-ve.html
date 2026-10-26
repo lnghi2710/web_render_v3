@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Lịch bảo vệ', 'lich', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Lịch bảo vệ</h1>
+    <p class="sub">Các buổi báo cáo trước hội đồng. Lịch dự kiến của đợt hiện khi chưa lập hội đồng.</p></div></div>
+<div class="panel" th:each="l : ${dsLich}">
+    <div class="panel-body">
+        <div class="dot-title mb-2"><h2 th:text="${l.hoiDong()}">Hội đồng</h2>
+            <span class="chip chip-plain chip-info" th:text="${l.dot()}">Đợt</span>
+            <span class="chip chip-plain" th:if="${l.daQua()}">Đã diễn ra</span>
+            <span class="chip chip-warn" th:if="${l.thoiGian() == null}">Chưa xếp lịch</span></div>
+        <dl class="kv">
+            <dt>Thời gian</dt><dd th:text="${l.thoiGian() != null} ? ${#temporals.format(l.thoiGian(),'EEEE, dd/MM/yyyy HH:mm')} : 'Chưa xác định'">Thời gian</dd>
+            <dt th:if="${l.diaDiem() != null}">Địa điểm</dt><dd th:if="${l.diaDiem() != null}" th:text="${l.diaDiem()}">Địa điểm</dd>
+            <dt th:if="${!#lists.isEmpty(l.thanhVien())}">Thành viên</dt>
+            <dd th:if="${!#lists.isEmpty(l.thanhVien())}"><div th:each="t : ${l.thanhVien()}" th:text="${t}">Thành viên</div></dd>
+            <dt th:if="${!#lists.isEmpty(l.nhom())}">Nhóm báo cáo</dt>
+            <dd th:if="${!#lists.isEmpty(l.nhom())}"><div th:each="n : ${l.nhom()}" th:text="${n}">Nhóm</div></dd>
+            <dt th:if="${l.ghiChu() != null}">Ghi chú</dt><dd th:if="${l.ghiChu() != null}" th:text="${l.ghiChu()}">Ghi chú</dd>
+        </dl>
+    </div>
+</div>
+<div class="panel" th:if="${#lists.isEmpty(dsLich)}"><div class="empty"><i class="bi bi-calendar-event"></i><strong>Chưa có buổi bảo vệ nào</strong>Lịch sẽ hiện ở đây khi Trưởng khoa lập hội đồng và xếp nhóm.</div></div>
+</section>
+</body>
+</html>

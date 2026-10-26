@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+<!-- Tài nguyên dùng chung cho mọi trang -->
+<th:block th:fragment="assets">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Mọi tài nguyên nằm trong ứng dụng: chạy được cả khi mạng nội bộ chặn Internet -->
+    <link th:href="@{/vendor/fonts/fonts.css}" rel="stylesheet">
+    <link th:href="@{/vendor/bootstrap/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/vendor/bootstrap-icons/bootstrap-icons.min.css}" rel="stylesheet">
+    <link th:href="@{/css/app.css}" rel="stylesheet">
+</th:block>
+</head>
+<body>
+<!-- Dòng thời gian 5 giai đoạn của một đợt đăng ký -->
+<ol class="phase" th:fragment="phase(dot)" th:with="o=${dot.trangThaiHienTai.ordinal()}">
+    <li th:classappend="${o gt 1} ? 'is-done' : (${o == 1} ? 'is-current')">
+        <strong>Giảng viên đăng ký</strong>
+        <span th:text="${#temporals.format(dot.gvBatDau,'dd/MM')} + ' đến ' + ${#temporals.format(dot.gvKetThuc,'dd/MM')}">01/01 đến 10/01</span>
+    </li>
+    <li th:classappend="${o gt 2} ? 'is-done' : (${o == 2} ? 'is-current')">
+        <strong>Duyệt đề tài</strong>
+        <span>Trưởng khoa duyệt</span>
+    </li>
+    <li th:classappend="${o gt 3} ? 'is-done' : (${o == 3} ? 'is-current')">
+        <strong>Sinh viên đăng ký</strong>
+        <span th:text="${#temporals.format(dot.svBatDau,'dd/MM')} + ' đến ' + ${#temporals.format(dot.svKetThuc,'dd/MM')}">11/01 đến 20/01</span>
+    </li>
+    <li th:classappend="${o gt 4} ? 'is-done' : (${o == 4} ? 'is-current')">
+        <strong>Thực hiện và chấm</strong>
+        <span>Nộp báo cáo, nhập điểm</span>
+    </li>
+    <li th:classappend="${o == 5} ? 'is-done'">
+        <strong>Công bố kết quả</strong>
+        <span th:text="${dot.daCongBo} ? 'Đã công bố' : 'Chưa công bố'">Chưa công bố</span>
+    </li>
+</ol>
+
+<!-- Chuông thông báo cá nhân: việc cần chú ý và thông báo mới của khoa -->
+<div class="dropdown bell" th:fragment="bell(chuong)">
+    <button class="btn btn-sm bell-btn" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+            aria-expanded="false" aria-label="Thông báo cá nhân">
+        <i class="bi bi-bell"></i>
+        <span class="bell-count" th:if="${chuong != null and chuong.soCanhBao() > 0}"
+              th:text="${chuong.soCanhBao() > 9} ? '9+' : ${chuong.soCanhBao()}">3</span>
+    </button>
+    <div class="dropdown-menu dropdown-menu-end bell-menu">
+        <div class="bell-head">Việc cần chú ý</div>
+        <th:block th:if="${chuong != null and !#lists.isEmpty(chuong.viec())}">
+            <a class="bell-item" th:each="v, st : ${chuong.viec()}" th:if="${st.index lt 6}" th:href="@{${v.url()}}">
+                <span class="mark" th:classappend="${v.muc()}"></span><span th:text="${v.noiDung()}">Nội dung</span></a>
+        </th:block>
+        <div class="bell-empty" th:if="${chuong == null or #lists.isEmpty(chuong.viec())}">
+            <i class="bi bi-check2-circle"></i>Không có việc nào cần xử lý</div>
+        <th:block th:if="${chuong != null and !#lists.isEmpty(chuong.thongBaoMoi())}">
+            <div class="bell-head">Thông báo của khoa</div>
+            <a class="bell-item" th:each="t, st : ${chuong.thongBaoMoi()}" th:if="${st.index lt 3}" th:href="@{/thong-bao/{id}(id=${t.id})}">
+                <span class="mark info"></span>
+                <span><span th:text="${t.tieuDe}">Tiêu đề</span>
+                    <small class="d-block text-muted" th:text="${#temporals.format(t.ngayDang,'dd/MM/yyyy HH:mm')}">time</small></span></a>
+        </th:block>
+        <a class="bell-foot" th:href="@{/thong-bao}">Xem tất cả thông báo</a>
+    </div>
+</div>
+
+<!-- Thanh tiến độ: bieu có tieuDe, phu và cot; mỗi cột có nhan, giaTri, toiDa, phanTram(), muc() -->
+<div class="chart" th:fragment="bieu(b)">
+    <div class="chart-head">
+        <div><strong th:text="${b.tieuDe()}">Tiêu đề</strong>
+            <div class="sub-text" th:if="${b.phu() != null}" th:text="${b.phu()}">Phụ đề</div></div>
+        <a class="small" th:if="${b.url() != null}" th:href="@{${b.url()}}">Chi tiết</a>
+    </div>
+    <div class="bar-row" th:each="c : ${b.cot()}">
+        <div class="bar-label"><span th:text="${c.nhan()}">Nhãn</span>
+            <b th:text="${c.toiDa() gt 0} ? ${c.giaTri()} + '/' + ${c.toiDa()} : ${c.giaTri()}">3/5</b></div>
+        <div class="bar" role="img" th:attr="aria-label=${c.nhan() + ': ' + c.giaTri() + ' trên ' + c.toiDa()}">
+            <span class="bar-fill" th:classappend="${c.muc()}" th:style="'width:' + ${c.phanTram()} + '%'"></span></div>
+    </div>
+</div>
+</body>
+</html>

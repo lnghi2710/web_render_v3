@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Đợt đăng ký', 'dot', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Đợt đăng ký</h1><p class="sub">Mỗi đợt đi qua năm giai đoạn. Mở từng chức năng bên dưới để duyệt đề tài, phân công, lập hội đồng và công bố điểm.</p></div>
+    <div class="page-actions"><a class="btn btn-primary" th:href="@{/truong-khoa/dot/moi}"><i class="bi bi-plus-lg"></i>Tạo đợt mới</a></div></div>
+
+<div class="panel dot-card" th:each="d : ${dsDot}">
+    <div class="panel-body">
+        <div class="dot-title">
+            <h2 th:text="${d.tenDot}">Tên đợt</h2>
+            <span class="chip chip-plain chip-info" th:text="${d.loai.nhan}">Loại</span>
+            <span class="chip" th:classappend="'chip-' + ${d.trangThaiHienTai.mau}" th:text="${d.trangThaiHienTai.nhan}">Trạng thái</span>
+            <div class="ms-auto toolbar">
+                <a class="btn btn-sm btn-outline-secondary" th:unless="${d.daCongBo}" th:href="@{/truong-khoa/dot/{id}/sua(id=${d.id})}"><i class="bi bi-pencil"></i>Sửa</a>
+                <form th:action="@{/truong-khoa/dot/{id}/xoa(id=${d.id})}" method="post" data-confirm="Xóa đợt này? Chỉ xóa được khi chưa có đề tài, nhóm hoặc hội đồng." data-confirm-style="danger">
+                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i>Xóa</button></form>
+            </div>
+        </div>
+        <ol class="phase" th:replace="~{fragments/ui :: phase(${d})}"></ol>
+        <div class="dates">
+            <div>Giảng viên đăng ký<b th:text="${#temporals.format(d.gvBatDau,'dd/MM/yyyy HH:mm')} + ' đến ' + ${#temporals.format(d.gvKetThuc,'dd/MM/yyyy HH:mm')}">...</b></div>
+            <div>Sinh viên đăng ký<b th:text="${#temporals.format(d.svBatDau,'dd/MM/yyyy HH:mm')} + ' đến ' + ${#temporals.format(d.svKetThuc,'dd/MM/yyyy HH:mm')}">...</b></div>
+            <div th:if="${d.hanNopDiemGvpb != null}">Hạn nộp điểm phản biện<b th:text="${#temporals.format(d.hanNopDiemGvpb,'dd/MM/yyyy HH:mm')}">...</b></div>
+            <div th:if="${d.ngayBaoCaoHoiDong != null}">Ngày báo cáo hội đồng<b th:text="${#temporals.format(d.ngayBaoCaoHoiDong,'dd/MM/yyyy HH:mm')}">...</b></div>
+        </div>
+        <div class="toolbar">
+            <a class="btn btn-sm btn-primary" th:href="@{/truong-khoa/dot/{id}/de-tai(id=${d.id})}"><i class="bi bi-check2-square"></i>Duyệt đề tài</a>
+            <a class="btn btn-sm btn-outline-primary" th:if="${d.loai.coGvpb()}" th:href="@{/truong-khoa/dot/{id}/phan-cong(id=${d.id})}"><i class="bi bi-person-check"></i>Phân công phản biện</a>
+            <a class="btn btn-sm btn-outline-primary" th:if="${d.loai.coHoiDong()}" th:href="@{/truong-khoa/dot/{id}/hoi-dong(id=${d.id})}"><i class="bi bi-people"></i>Hội đồng</a>
+            <a class="btn btn-sm btn-outline-primary" th:href="@{/truong-khoa/dot/{id}/diem(id=${d.id})}"><i class="bi bi-table"></i>Bảng điểm và công bố</a>
+            <a class="btn btn-sm btn-outline-primary" th:if="${d.loai.coGvpb()}" th:href="@{/truong-khoa/dot/{id}/qua-han(id=${d.id})}"><i class="bi bi-alarm"></i>Phản biện quá hạn</a>
+        </div>
+    </div>
+</div>
+<div class="panel" th:if="${#lists.isEmpty(dsDot)}"><div class="empty"><i class="bi bi-calendar2-week"></i>
+    <strong>Chưa có đợt đăng ký nào</strong>Tạo đợt đầu tiên để giảng viên bắt đầu đăng ký đề tài.
+    <div class="mt-3"><a class="btn btn-primary" th:href="@{/truong-khoa/dot/moi}">Tạo đợt mới</a></div></div></div>
+</section>
+</body>
+</html>

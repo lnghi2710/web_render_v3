@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Tiến độ đợt', 'tiendo', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Tiến độ đợt</h1>
+    <p class="sub">Từ đề tài được duyệt đến nhóm đủ điểm. Mỗi thanh cho biết bao nhiêu phần đã hoàn thành.</p></div>
+    <div class="page-actions">
+        <a class="btn btn-outline-secondary" th:unless="${tatCa}" th:href="@{/truong-khoa/tien-do(tatCa=true)}">Hiện cả đợt đã công bố</a>
+        <a class="btn btn-outline-secondary" th:if="${tatCa}" th:href="@{/truong-khoa/tien-do}">Chỉ đợt chưa công bố</a></div></div>
+<div class="row g-4">
+    <div class="col-lg-6" th:each="b : ${dsBieu}"><div class="panel"><div class="panel-body">
+        <div th:replace="~{fragments/ui :: bieu(${b})}"></div></div></div></div>
+</div>
+<div class="panel" th:if="${#lists.isEmpty(dsBieu)}"><div class="empty"><i class="bi bi-bar-chart-steps"></i><strong>Chưa có đợt nào để theo dõi</strong></div></div>
+</section>
+</body>
+</html>

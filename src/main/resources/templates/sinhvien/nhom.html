@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Nhóm của tôi', 'svnhom', ~{::section})}">
+<body>
+<section>
+<div class="crumbs"><a th:href="@{/sinh-vien/dot}">Đợt đăng ký</a><span class="sep"></span><span th:text="${dot.tenDot}">Đợt</span></div>
+<div class="page-head"><div><h1>Nhóm của tôi</h1><p class="sub" th:text="${dot.tenDot} + ' (' + ${dot.loai.nhan} + ')'">Đợt</p></div>
+    <div class="page-actions"><a class="btn btn-outline-primary" th:href="@{/sinh-vien/dot/{id}/de-tai(id=${dot.id})}"><i class="bi bi-journal-text"></i>Xem đề tài đã công bố</a>
+        <a class="btn btn-outline-secondary" th:href="@{/sinh-vien/tim-ban(dotId=${dot.id})}"><i class="bi bi-person-plus"></i>Tìm bạn ghép nhóm</a></div></div>
+<div class="panel"><div class="panel-body"><ol class="phase" th:replace="~{fragments/ui :: phase(${dot})}"></ol></div></div>
+
+<div class="panel" th:if="${nhom == null}">
+    <div class="empty" th:unless="${dot.trongThoiGianSv()}"><i class="bi bi-people"></i><strong>Bạn chưa thuộc nhóm nào</strong>Hiện không trong thời gian sinh viên đăng ký của đợt này.</div>
+    <div class="panel-body" th:if="${dot.trongThoiGianSv()}">
+        <h2 class="h5">Tạo nhóm mới</h2>
+        <p class="sub-text">Bạn sẽ là nhóm trưởng và thêm được tối đa <span th:text="${toiDa - 1}">2</span> bạn khác bằng mã sinh viên. Mỗi sinh viên chỉ thuộc một nhóm trong một đợt.</p>
+        <form th:action="@{/sinh-vien/dot/{id}/nhom(id=${dot.id})}" method="post" class="row g-2" style="max-width:560px">
+            <div class="col-sm-7"><input name="tenNhom" class="form-control" placeholder="Tên nhóm (không bắt buộc)" aria-label="Tên nhóm"></div>
+            <div class="col-sm-5"><button class="btn btn-primary w-100">Tạo nhóm</button></div></form>
+    </div>
+</div>
+
+<div th:if="${nhom != null}">
+    <div class="panel">
+        <div class="panel-head"><h2 th:text="${nhom.tenNhom}">Nhóm</h2>
+            <form th:if="${laTruong and dot.trongThoiGianSv() and nhom.deTai == null}" th:action="@{/sinh-vien/nhom/{id}/giai-tan(id=${nhom.id})}" method="post" data-confirm="Giải tán nhóm?" data-confirm-style="danger">
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-circle"></i>Giải tán nhóm</button></form></div>
+        <div class="panel-body">
+            <dl class="kv mb-4">
+                <dt>Đề tài</dt><dd><strong th:if="${nhom.deTai != null}" th:text="${nhom.deTai.tenDeTai}">Đề tài</strong>
+                    <span class="muted-dash" th:unless="${nhom.deTai != null}">Chưa đăng ký</span></dd>
+                <dt th:if="${nhom.deTai != null}">Hướng dẫn</dt><dd th:if="${nhom.deTai != null}" th:text="${nhom.deTai.tenGvhds}">Giảng viên</dd>
+            </dl>
+            <h3 class="h6">Thành viên (<span th:text="${#lists.size(nhom.thanhViens)}">1</span>/<span th:text="${toiDa}">3</span>)</h3>
+            <div class="person justify-content-between border-top py-2" th:each="tv : ${nhom.thanhViens}">
+                <div class="person"><span class="avatar" th:text="${tv.sinhVien.initials}">A</span>
+                    <div><div class="name" th:text="${tv.sinhVien.hoTen}">Họ tên</div><small th:text="${tv.sinhVien.maSv} + ', lớp ' + ${tv.sinhVien.lop}">Mã</small></div></div>
+                <div><span class="chip chip-primary chip-plain" th:if="${tv.laNhomTruong}">Nhóm trưởng</span>
+                    <form class="d-inline" th:if="${laTruong and !tv.laNhomTruong and dot.trongThoiGianSv()}"
+                          th:action="@{/sinh-vien/nhom/{id}/thanh-vien/{sv}/xoa(id=${nhom.id},sv=${tv.sinhVien.id})}" method="post">
+                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-person-dash"></i>Xóa</button></form></div></div>
+            <form class="row g-2 border-top pt-3" style="max-width:520px" th:if="${laTruong and dot.trongThoiGianSv() and #lists.size(nhom.thanhViens) lt toiDa}"
+                  th:action="@{/sinh-vien/nhom/{id}/thanh-vien(id=${nhom.id})}" method="post">
+                <div class="col-sm-7"><input name="maSv" class="form-control" placeholder="Mã sinh viên cần thêm" aria-label="Mã sinh viên" required></div>
+                <div class="col-sm-5"><button class="btn btn-primary w-100"><i class="bi bi-person-plus"></i>Thêm thành viên</button></div></form>
+            <p class="sub-text mt-3 mb-0" th:unless="${laTruong}">Chỉ nhóm trưởng được đổi thành viên, đăng ký đề tài và nộp báo cáo.</p>
+        </div>
+    </div>
+
+    <div class="panel" th:if="${nhom.deTai != null}">
+        <div class="panel-head"><h2>Báo cáo</h2></div>
+        <div class="panel-body">
+            <p th:if="${nhom.fileBaoCao != null}"><i class="bi bi-file-earmark-pdf"></i> Đã nộp lúc <strong th:text="${#temporals.format(nhom.ngayNopBaoCao,'dd/MM/yyyy HH:mm')}">time</strong>. Nộp lại sẽ thay thế tệp cũ.</p>
+            <p class="muted-dash" th:unless="${nhom.fileBaoCao != null}">Nhóm chưa nộp báo cáo.</p>
+            <form th:if="${laTruong and dot.sauThoiGianSv() and !dot.daCongBo}" th:action="@{/sinh-vien/nhom/{id}/bao-cao(id=${nhom.id})}"
+                  method="post" enctype="multipart/form-data" class="row g-2" style="max-width:640px">
+                <div class="col-sm-8"><input type="file" name="file" accept="application/pdf,.pdf" class="form-control" aria-label="Chọn tệp PDF" required></div>
+                <div class="col-sm-4"><button class="btn btn-primary w-100"><i class="bi bi-upload"></i>Nộp báo cáo</button></div>
+                <div class="form-hint">Chỉ nhận tệp PDF, tối đa 20MB.</div></form>
+            <p class="sub-text mb-0" th:unless="${dot.sauThoiGianSv()}">Có thể nộp báo cáo sau khi thời gian sinh viên đăng ký kết thúc.</p>
+        </div>
+    </div>
+</div>
+</section>
+</body>
+</html>

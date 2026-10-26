@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Tài khoản', 'tk', ~{::section})}">
+<body>
+<section>
+<div class="crumbs"><a th:href="@{/admin/tai-khoan}">Tài khoản</a><span class="sep"></span><span th:text="${taoMoi} ? 'Thêm mới' : 'Chỉnh sửa'">Thêm mới</span></div>
+<div class="page-head"><div><h1 th:text="${taoMoi} ? 'Thêm tài khoản' : 'Sửa tài khoản'">Tài khoản</h1>
+    <p class="sub">Vai trò quyết định các chức năng người dùng được dùng.</p></div></div>
+<form th:action="@{${action}}" th:object="${form}" method="post" class="panel" style="max-width:820px">
+    <div class="panel-body">
+        <div class="form-section">
+            <h3>Thông tin đăng nhập</h3><p>Tên đăng nhập không đổi được sau khi tạo.</p>
+            <div class="row g-3">
+                <div class="col-md-6"><label class="form-label" for="username">Tên đăng nhập</label>
+                    <input class="form-control" th:field="*{username}" th:readonly="${!taoMoi}">
+                    <div class="field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div></div>
+                <div class="col-md-6"><label class="form-label" for="password" th:text="${taoMoi} ? 'Mật khẩu' : 'Mật khẩu mới'">Mật khẩu</label>
+                    <input type="password" class="form-control" th:field="*{password}" autocomplete="new-password">
+                    <div class="form-hint" th:unless="${taoMoi}">Để trống nếu giữ nguyên mật khẩu hiện tại.</div></div>
+            </div></div>
+        <div class="form-section">
+            <h3>Thông tin cá nhân</h3><p>Dùng để hiển thị trong hệ thống.</p>
+            <div class="row g-3">
+                <div class="col-md-6"><label class="form-label" for="fullName">Họ và tên</label>
+                    <input class="form-control" th:field="*{fullName}">
+                    <div class="field-error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div></div>
+                <div class="col-md-6"><label class="form-label" for="email">Email</label>
+                    <input class="form-control" th:field="*{email}">
+                    <div class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div></div>
+            </div></div>
+        <div class="form-section">
+            <h3>Vai trò</h3><p>Giảng viên và sinh viên cần thêm thông tin hồ sơ.</p>
+            <div class="row g-3">
+                <div class="col-md-6"><label class="form-label" for="role">Vai trò</label>
+                    <select class="form-select" th:field="*{role}" id="role">
+                        <option th:each="r : ${roles}" th:value="${r}" th:text="${r.nhan}">Vai trò</option></select></div></div>
+            <div class="row g-3 mt-0" id="hoSoGv">
+                <div class="col-md-6"><label class="form-label" for="maGv">Mã giảng viên</label><input class="form-control" th:field="*{maGv}"></div>
+                <div class="col-md-6"><label class="form-label" for="boMonId">Bộ môn</label>
+                    <select class="form-select" th:field="*{boMonId}"><option value="">Chọn bộ môn</option>
+                        <option th:each="b : ${boMons}" th:value="${b.id}" th:text="${b.tenBoMon}">Bộ môn</option></select></div></div>
+            <div class="row g-3 mt-0" id="hoSoSv">
+                <div class="col-md-6"><label class="form-label" for="maSv">Mã sinh viên</label><input class="form-control" th:field="*{maSv}"></div>
+                <div class="col-md-6"><label class="form-label" for="lop">Lớp</label><input class="form-control" th:field="*{lop}"></div></div>
+        </div>
+    </div>
+    <div class="panel-foot"><button class="btn btn-primary" type="submit">Lưu tài khoản</button>
+        <a class="btn btn-light" th:href="@{/admin/tai-khoan}">Hủy</a></div>
+</form>
+<script>
+    function capNhatHoSo() {
+        var r = document.getElementById('role').value;
+        document.getElementById('hoSoGv').style.display = r === 'GIANG_VIEN' ? '' : 'none';
+        document.getElementById('hoSoSv').style.display = r === 'SINH_VIEN' ? '' : 'none';
+    }
+    document.getElementById('role').addEventListener('change', capNhatHoSo);
+    capNhatHoSo();
+</script>
+</section>
+</body>
+</html>

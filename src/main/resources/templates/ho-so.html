@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Hồ sơ cá nhân', 'hoso', ~{::section})}">
+<body>
+<section>
+<div class="page-head"><div><h1>Hồ sơ cá nhân</h1><p class="sub">Bạn tự sửa họ tên và email. Tên đăng nhập, vai trò, mã số và đơn vị do quản trị viên quản lý.</p></div></div>
+<form th:action="@{/ho-so}" th:object="${form}" method="post" class="panel" style="max-width:640px">
+    <div class="panel-body">
+        <dl class="kv mb-4">
+            <dt>Tên đăng nhập</dt><dd th:text="${user.username}">user</dd>
+            <dt>Vai trò</dt><dd th:text="${user.role.nhan}">Vai trò</dd>
+            <th:block th:each="e : ${chiTiet}"><dt th:text="${e.key}">Nhãn</dt><dd th:text="${e.value}">Giá trị</dd></th:block>
+        </dl>
+        <div class="mb-3"><label class="form-label" for="fullName">Họ và tên</label>
+            <input class="form-control" th:field="*{fullName}" autocomplete="name">
+            <div class="field-error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div></div>
+        <div><label class="form-label" for="email">Email</label>
+            <input type="email" class="form-control" th:field="*{email}" autocomplete="email">
+            <div class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div></div>
+    </div>
+    <div class="panel-foot"><button class="btn btn-primary" type="submit">Lưu hồ sơ</button>
+        <a class="btn btn-light" th:href="@{/doi-mat-khau}">Đổi mật khẩu</a></div>
+</form>
+</section>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi"
+      th:replace="~{fragments/shell :: layout('Nhật ký hướng dẫn', 'nhatkygv', ~{::section})}">
+<body>
+<section>
+<div class="crumbs"><a th:href="@{/giang-vien/nhat-ky}">Nhật ký hướng dẫn</a><span class="sep"></span><span th:text="${nhom.tenNhom}">Nhóm</span></div>
+<div class="page-head"><div><h1 th:text="${nhom.tenNhom}">Nhóm</h1><p class="sub" th:text="${nhom.deTai.tenDeTai} + ' · ' + ${nhom.dot.tenDot}">Đề tài</p></div></div>
+<div class="row g-4">
+    <div class="col-lg-5">
+        <form th:action="@{/giang-vien/nhom/{id}/nhat-ky(id=${nhom.id})}" th:object="${form}" method="post" class="panel" th:unless="${nhom.dot.daCongBo}">
+            <div class="panel-head"><h2>Ghi buổi hướng dẫn</h2></div>
+            <div class="panel-body">
+                <div class="mb-3"><label class="form-label" for="thoiGian">Thời điểm (để trống là bây giờ)</label>
+                    <input type="datetime-local" class="form-control" th:field="*{thoiGian}"></div>
+                <div class="mb-3"><label class="form-label" for="noiDung">Nội dung đã trao đổi</label>
+                    <textarea class="form-control" rows="5" th:field="*{noiDung}" maxlength="2000"></textarea>
+                    <div class="field-error" th:if="${#fields.hasErrors('noiDung')}" th:errors="*{noiDung}"></div></div>
+                <div><label class="form-label" for="viecTiepTheo">Việc nhóm cần làm tiếp (không bắt buộc)</label>
+                    <textarea class="form-control" rows="3" th:field="*{viecTiepTheo}" maxlength="1000"></textarea></div>
+            </div>
+            <div class="panel-foot"><button class="btn btn-primary">Lưu nhật ký</button></div>
+        </form>
+        <div class="notice notice-info" th:if="${nhom.dot.daCongBo}"><i class="bi bi-lock"></i><span>Đợt đã công bố kết quả, nhật ký chỉ để xem.</span></div>
+    </div>
+    <div class="col-lg-7">
+        <div class="panel"><div class="panel-head"><h2>Các buổi đã ghi</h2><span class="sub-text" th:text="${#lists.size(dsNhatKy)} + ' buổi'">0 buổi</span></div>
+            <ul class="timeline" th:if="${!#lists.isEmpty(dsNhatKy)}">
+                <li th:each="k : ${dsNhatKy}">
+                    <div class="when"><b th:text="${#temporals.format(k.thoiGian,'dd/MM/yyyy')}">01/01/2026</b><span th:text="${#temporals.format(k.thoiGian,'HH:mm')}">08:00</span></div>
+                    <div><div class="pre-wrap" th:text="${k.noiDung}">Nội dung</div>
+                        <div class="sub-text mt-1 pre-wrap" th:if="${k.viecTiepTheo != null}" th:text="'Việc tiếp theo: ' + ${k.viecTiepTheo}">Việc</div>
+                        <div class="sub-text" th:text="${k.giangVien.hoTen}">GV</div>
+                        <form class="mt-1" th:unless="${nhom.dot.daCongBo}" th:action="@{/giang-vien/nhat-ky/{id}/xoa(id=${k.id})}" method="post" data-confirm="Xóa mục nhật ký này?" data-confirm-style="danger">
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i>Xóa</button></form></div></li></ul>
+            <div class="empty" th:if="${#lists.isEmpty(dsNhatKy)}"><i class="bi bi-journal-bookmark"></i><strong>Chưa ghi buổi nào</strong></div>
+        </div>
+    </div>
+</div>
+</section>
+</body>
+</html>
